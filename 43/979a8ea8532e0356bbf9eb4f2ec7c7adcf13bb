@@ -1,0 +1,23 @@
+bench/run_case.py
+  s_66eb5180839019::t_c35bd5602f83af 127-128,131-132
+docs/optimization.md
+  s_66eb5180839019::t_c35bd5602f83af 35-36
+bench/inferrsi_pair.py
+  s_66eb5180839019::t_c35bd5602f83af 50,56,67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "43979a8ea8532e0356bbf9eb4f2ec7c7adcf13bb",
+  "prompts": {},
+  "sessions": {
+    "s_66eb5180839019": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1e239-8b8a-7751-bd4f-d1c6b1ddbec3",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    }
+  }
+}
