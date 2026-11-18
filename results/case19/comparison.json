@@ -1,0 +1,135 @@
+{
+  "scenario": 19,
+  "workload": {
+    "source": "GSM8K-derived single-prefix dataset",
+    "dataset_sha256": "90de4bafe69e1bf0f9574e1e297c3cccc34fdc93659db6463481d42ce4f9ba20",
+    "requests": 168,
+    "input_tokens": 131072,
+    "output_tokens": 1,
+    "shared_prefix_tokens": 117888,
+    "generation": {
+      "temperature": 0,
+      "ignore_eos": true,
+      "seed": 1024
+    },
+    "request_rate_zero": "unlimited",
+    "window": "from the first request start to the last completion",
+    "prefill_warmup": "reset all four P ranks then prime each with an independent request sharing the prefix"
+  },
+  "deployment": {
+    "model": "DeepSeek-V4.1-Flash 1017 W4A8",
+    "backend": "Ascend A3",
+    "same_superpod": true,
+    "prefill_cards": 8,
+    "decode_cards": 8,
+    "prefill": "DP4/PCP4/TP1",
+    "decode": "DP16/TP1/EP16",
+    "image_build": "v0.32.0rc1-a3-openeuler-20261111103136_aarch64",
+    "host_vmm_backport": 21623,
+    "proxy": "original",
+    "baseline_renderer_workers": 1,
+    "baseline_decode_graph_capture_sizes": null,
+    "vllm_revision": "5df63a7203cdb9328d824a27b682e77c7b9928be",
+    "vllm_ascend_revision": "24487f4f48ee99cf45d86d1c504e645549b8c1ef",
+    "dies_per_card": 2,
+    "max_model_len": 1048576,
+    "inferrsi_revision": "8aba657da79e8ed9f6e6fbb33437e9d9fdd8f1c7",
+    "original_decode_reused": true,
+    "original_proxy_reused": true,
+    "baseline_prefill": {
+      "renderer_workers": 1,
+      "max_num_batched_tokens": 8192
+    },
+    "optimized_prefill": {
+      "renderer_workers": 4,
+      "max_model_len": 1048576,
+      "dp": 4,
+      "pcp": 4,
+      "tp": 1,
+      "expert_parallel": true,
+      "enable_eplb": true,
+      "eplb": {
+        "window_size": 32,
+        "step_interval": 40,
+        "num_redundant_experts": 16,
+        "use_async": true,
+        "policy": "stair"
+      },
+      "max_num_batched_tokens": 32768,
+      "max_num_seqs": 16,
+      "gpu_memory_utilization": 0.9,
+      "prefix_caching": true,
+      "moe_fusion": 2,
+      "engram_overlap": true,
+      "kv_connector": "MooncakeHybridConnector",
+      "shared_engram": true,
+      "speculative_tokens": 5,
+      "startup_profile_limit_per_die": 16384,
+      "pcp_gather_overlap_pr": 21628,
+      "eplb_communicator": "HIXL"
+    }
+  },
+  "acceptance": {
+    "mean_ttft_limit_ms": 10000,
+    "minimum_gain_pct": 30,
+    "repetitions_per_arm": 2,
+    "measurement_order": "baseline followed by optimized deployment",
+    "evaluation": "InferRSI replay of archived measured trials"
+  },
+  "original_reference": {
+    "source": "User-supplied aggregate table with corrected total input and E2E throughput",
+    "requests": 168,
+    "concurrency": 42,
+    "request_rate": 0,
+    "reported_system_concurrency": 37,
+    "reported_prefix_cache_pct": 90,
+    "mean_ttft_ms": 10359.9,
+    "p90_ttft_ms": 11973.7,
+    "input_tokens_per_second": 468667.43,
+    "input_tok_s_p_card": 58583.42875,
+    "output_tokens_per_second": 3.57,
+    "e2e_tokens_per_second": 468671,
+    "duration_s": 46.995,
+    "qps": 3.57
+  },
+  "baseline": {
+    "concurrency": 24,
+    "request_rate": 0.0,
+    "input_tok_s_p_card": 68239.30183361039,
+    "mean_ttft_ms": 5440.716413556532,
+    "p90_ttft_ms": 5830.781247670529,
+    "duration_s": 40.33617134246742,
+    "prefill_prefix_hit_rate": 0.899420924537083,
+    "trials": [
+      "base-confirm/01-c24-rr0",
+      "base-confirm/02-c24-rr0"
+    ]
+  },
+  "optimized": {
+    "concurrency": 52,
+    "request_rate": 0.0,
+    "input_tok_s_p_card": 105396.83519249772,
+    "mean_ttft_ms": 7057.341344562051,
+    "p90_ttft_ms": 8533.472522051306,
+    "duration_s": 26.115704055991955,
+    "prefill_prefix_hit_rate": 0.899420924537083,
+    "trials": [
+      "eplb32-confirm/01-c52-rr0",
+      "eplb32-confirm/02-c52-rr0"
+    ]
+  },
+  "improvement_pct": 54.45180762471675,
+  "fixed_load_c42": {
+    "baseline_trial": "base-initial/02-c42-rr0",
+    "pre_eplb_trial": "dsa32-sweep/02-c42-rr0",
+    "optimized_trial": "eplb32-sweep/01-c42-rr0",
+    "gain_pct": 51.74904960126647,
+    "eplb_stage_gain_pct": 33.57535300385741
+  },
+  "eplb_calibration": {
+    "runs": 2,
+    "rows": 168,
+    "sha256": "a0500ec43b14abab763003d21a6212e2673e7385b6521a2ffbfa237c4bb5d0b7",
+    "evaluation_prompts_reused": 0
+  }
+}

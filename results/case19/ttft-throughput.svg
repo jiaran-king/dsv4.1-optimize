@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="548" viewBox="0 0 1000 548">
+<rect width="1000" height="548" fill="white"/>
+<g font-family="Arial, PingFang SC, sans-serif" fill="#233246">
+<text x="36.0" y="48.0" font-size="27" text-anchor="start" fill="#233246" font-weight="700">编号 19 · P 侧单卡输入吞吐与 TTFT</text>
+<text x="36.0" y="76.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">Ascend A3 1P1D · 168 条全程 · 128K 输入 / 1 token 输出 · 90% 单前缀</text>
+<rect x="109.0" y="121" width="725.3" height="319" fill="#eef7f0"/>
+<line x1="109.0" y1="440.0" x2="925.0" y2="440.0" stroke="#dce4ec"/>
+<text x="100.0" y="444.0" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">40,000</text>
+<line x1="109.0" y1="394.4" x2="925.0" y2="394.4" stroke="#dce4ec"/>
+<text x="100.0" y="398.4" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">50,000</text>
+<line x1="109.0" y1="348.9" x2="925.0" y2="348.9" stroke="#dce4ec"/>
+<text x="100.0" y="352.9" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">60,000</text>
+<line x1="109.0" y1="303.3" x2="925.0" y2="303.3" stroke="#dce4ec"/>
+<text x="100.0" y="307.3" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">70,000</text>
+<line x1="109.0" y1="257.7" x2="925.0" y2="257.7" stroke="#dce4ec"/>
+<text x="100.0" y="261.7" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">80,000</text>
+<line x1="109.0" y1="212.1" x2="925.0" y2="212.1" stroke="#dce4ec"/>
+<text x="100.0" y="216.1" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">90,000</text>
+<line x1="109.0" y1="166.6" x2="925.0" y2="166.6" stroke="#dce4ec"/>
+<text x="100.0" y="170.6" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">100,000</text>
+<line x1="109.0" y1="121.0" x2="925.0" y2="121.0" stroke="#dce4ec"/>
+<text x="100.0" y="125.0" font-size="13" text-anchor="end" fill="#53657a" font-weight="400">110,000</text>
+<line x1="109.0" y1="440.0" x2="109.0" y2="445.0" stroke="#9eaebf"/>
+<text x="109.0" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">2</text>
+<line x1="199.7" y1="440.0" x2="199.7" y2="445.0" stroke="#9eaebf"/>
+<text x="199.7" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">3</text>
+<line x1="290.3" y1="440.0" x2="290.3" y2="445.0" stroke="#9eaebf"/>
+<text x="290.3" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">4</text>
+<line x1="381.0" y1="440.0" x2="381.0" y2="445.0" stroke="#9eaebf"/>
+<text x="381.0" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">5</text>
+<line x1="471.7" y1="440.0" x2="471.7" y2="445.0" stroke="#9eaebf"/>
+<text x="471.7" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">6</text>
+<line x1="562.3" y1="440.0" x2="562.3" y2="445.0" stroke="#9eaebf"/>
+<text x="562.3" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">7</text>
+<line x1="653.0" y1="440.0" x2="653.0" y2="445.0" stroke="#9eaebf"/>
+<text x="653.0" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">8</text>
+<line x1="743.7" y1="440.0" x2="743.7" y2="445.0" stroke="#9eaebf"/>
+<text x="743.7" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">9</text>
+<line x1="834.3" y1="440.0" x2="834.3" y2="445.0" stroke="#9eaebf"/>
+<text x="834.3" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">10</text>
+<line x1="925.0" y1="440.0" x2="925.0" y2="445.0" stroke="#9eaebf"/>
+<text x="925.0" y="462.0" font-size="13" text-anchor="middle" fill="#53657a" font-weight="400">11</text>
+<line x1="109.0" y1="440.0" x2="925.0" y2="440.0" stroke="#9eaebf"/>
+<line x1="834.3" y1="121.0" x2="834.3" y2="440.0" stroke="#a95a1f" stroke-dasharray="5 4"/>
+<line x1="109.0" y1="218.0" x2="925.0" y2="218.0" stroke="#a95a1f" stroke-dasharray="5 4"/>
+<text x="920.0" y="212.0" font-size="13" text-anchor="end" fill="#a95a1f" font-weight="400">+30% · 88,711</text>
+<text x="839.3" y="114.0" font-size="13" text-anchor="start" fill="#a95a1f" font-weight="400">10 秒门限</text>
+<text x="517.0" y="487.0" font-size="14" text-anchor="middle" fill="#233246" font-weight="400">全程平均 TTFT（秒）</text>
+<g transform="translate(25 285) rotate(-90)">
+<text x="0.0" y="0.0" font-size="14" text-anchor="middle" fill="#233246" font-weight="400">P 侧单卡输入吞吐（tok/s/卡）</text>
+</g>
+<circle cx="379.7" cy="283.6" r="7" fill="#286597" stroke="#286597" stroke-width="1.4"><title>16K 批次 C24 · 4.99 s · 74,312 tok/s/卡</title></circle>
+<circle cx="676.3" cy="283.7" r="4.5" fill="#286597" stroke="#286597" stroke-width="1.4"><title>16K 批次 C42 · 8.26 s · 74,291 tok/s/卡</title></circle>
+<circle cx="109" cy="519" r="4.5" fill="#286597"/>
+<text x="119.0" y="523.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">16K 批次</text>
+<circle cx="431.0" cy="317.7" r="4.5" fill="#198063" stroke="#198063" stroke-width="1.4"><title>32K 批次 C24 · 5.55 s · 66,830 tok/s/卡</title></circle>
+<circle cx="669.2" cy="278.2" r="4.5" fill="#198063" stroke="#198063" stroke-width="1.4"><title>32K 批次 C42 · 8.18 s · 75,503 tok/s/卡</title></circle>
+<circle cx="756.5" cy="278.3" r="4.5" fill="#198063" stroke="#198063" stroke-width="1.4"><title>32K 批次 C48 · 9.14 s · 75,475 tok/s/卡</title></circle>
+<circle cx="812.7" cy="273.8" r="7" fill="#198063" stroke="#198063" stroke-width="1.4"><title>32K 批次 C52 · 9.76 s · 76,474 tok/s/卡</title></circle>
+<circle cx="293" cy="519" r="4.5" fill="#198063"/>
+<text x="303.0" y="523.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">32K 批次</text>
+<circle cx="466.4" cy="154.0" r="4.5" fill="#b05d24" stroke="#b05d24" stroke-width="1.4"><title>EPLB C42 · 5.94 s · 102,756 tok/s/卡</title></circle>
+<circle cx="347.0" cy="282.5" r="4.5" fill="#b05d24" stroke="#b05d24" stroke-width="1.4"><title>EPLB C42 / RR 5.2 · 4.63 s · 74,551 tok/s/卡</title></circle>
+<circle cx="567.5" cy="142.0" r="7" fill="#b05d24" stroke="#b05d24" stroke-width="1.4"><title>EPLB C52 · 7.06 s · 105,397 tok/s/卡</title></circle>
+<text x="577.5" y="131.0" font-size="12" text-anchor="start" fill="#b05d24" font-weight="700">C52 · 105,397</text>
+<circle cx="477" cy="519" r="4.5" fill="#b05d24"/>
+<text x="487.0" y="523.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">EPLB</text>
+<circle cx="663.3" cy="271.7" r="7" fill="#794da4" stroke="#794da4" stroke-width="1.4"><title>PCP 与 Engram C42 · 8.11 s · 76,928 tok/s/卡</title></circle>
+<circle cx="808.9" cy="276.8" r="4.5" fill="#794da4" stroke="#794da4" stroke-width="1.4"><title>PCP 与 Engram C52 · 9.72 s · 75,812 tok/s/卡</title></circle>
+<circle cx="661" cy="519" r="4.5" fill="#794da4"/>
+<text x="671.0" y="523.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">PCP 与 Engram</text>
+<circle cx="178.2" cy="410.2" r="4.5" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C8 · 2.76 s · 46,533 tok/s/卡</title></circle>
+<circle cx="265.3" cy="313.4" r="4.5" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C16 · 3.72 s · 67,782 tok/s/卡</title></circle>
+<circle cx="421.0" cy="311.3" r="7" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C24 · 5.44 s · 68,239 tok/s/卡</title></circle>
+<text x="431.0" y="300.3" font-size="12" text-anchor="start" fill="#69788b" font-weight="700">C24 · 68,239</text>
+<circle cx="569.4" cy="311.9" r="4.5" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C32 · 7.08 s · 68,109 tok/s/卡</title></circle>
+<circle cx="745.9" cy="313.7" r="4.5" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C42 · 9.02 s · 67,715 tok/s/卡</title></circle>
+<circle cx="371.9" cy="330.0" r="4.5" fill="#69788b" stroke="#69788b" stroke-width="1.4"><title>基线 C42 / RR 4.5 · 4.90 s · 64,132 tok/s/卡</title></circle>
+<circle cx="842.0" cy="312.6" r="4.5" fill="white" stroke="#69788b" stroke-width="1.4"><title>基线 C48 · 10.08 s · 67,953 tok/s/卡</title></circle>
+<circle cx="845" cy="519" r="4.5" fill="#69788b"/>
+<text x="855.0" y="523.0" font-size="13" text-anchor="start" fill="#53657a" font-weight="400">基线</text>
+</g>
+</svg>

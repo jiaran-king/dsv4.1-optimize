@@ -4,6 +4,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -13,7 +14,12 @@ import urllib.request
 
 
 BENCH = Path(__file__).resolve().parent
-CASES = {"smoke": (8, 2, 1.0), "full1300": (1300, 130, 3.6), "steady": (576, 216, 0.0)}
+CASES = {
+    "smoke": (8, 2, 1.0),
+    "full1300": (1300, 130, 3.6),
+    "steady": (576, 216, 0.0),
+    "case21": (4608, 1152, 0.0),
+}
 GENERATION = {"temperature": 0, "ignore_eos": True, "seed": 1024}
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
@@ -42,10 +48,14 @@ def prefix_counts(prefillers):
 
 
 def run(args):
-    count, default_concurrency, request_rate = CASES[args.case]
+    count, default_concurrency, default_rate = CASES[args.case]
     concurrency = args.concurrency if args.concurrency is not None else default_concurrency
+    request_rate = args.request_rate if args.request_rate is not None else default_rate
+    tpot_limit = 50.0 if args.case == "case21" else 21.0
     if not 1 <= concurrency <= count:
         raise ValueError("Concurrency must be between 1 and the number of requests")
+    if not math.isfinite(request_rate) or request_rate < 0:
+        raise ValueError("Request rate must be finite and nonnegative")
     output = args.output.resolve()
     output.mkdir(parents=True)
     dataset = args.dataset.resolve(strict=True)
@@ -86,7 +96,7 @@ def run(args):
         "--generation-kwargs", json.dumps(GENERATION), "--num-warmups", "0",
         "--request-rate", str(request_rate), "--batch-size", str(concurrency), "--work-dir", str(output / "aisbench"),
     ]
-    print(f"Running {count} timed requests at concurrency {concurrency}", flush=True)
+    print(f"Running {count} timed requests at concurrency {concurrency}, request rate {request_rate:g}", flush=True)
     with (output / "aisbench.log").open("x", encoding="utf-8") as log:
         subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
     after = prefix_counts(prefillers)
@@ -121,12 +131,12 @@ def run(args):
         "metrics": {"output_tok_s_d_card": selected["output_tokens_per_second"] / 8 if selected else None},
         "checks": {
             "complete_workload": True,
-            "mean_tpot_within_limit": selected is not None and selected["tpot_ms_mean"] < 21.0,
+            "mean_tpot_within_limit": selected is not None and selected["tpot_ms_mean"] < tpot_limit,
         },
     }
     result_json = json.dumps(result, indent=2) + "\n"
     (output / "result.json").write_text(result_json, encoding="utf-8")
-    if args.case == "steady" and selected is None:
+    if args.case in ("steady", "case21") and selected is None:
         raise ValueError("AISBench did not find a steady window")
     if (result_path := os.getenv("INFERRSI_RESULT_PATH")) is not None:
         Path(result_path).write_text(result_json, encoding="utf-8")
@@ -140,6 +150,7 @@ def main():
     parser.add_argument("--tokenizer", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--concurrency", type=int)
+    parser.add_argument("--request-rate", type=float, help="Requests per second; 0 sends without rate limiting")
     for name, env_var in (("--proxy-host", "PD_PROXY_HOST"), ("--prefill-host", "PD_P_HOST")):
         value = os.getenv(env_var)
         parser.add_argument(name, default=value, required=not value, help=f"Fallback is {env_var}")

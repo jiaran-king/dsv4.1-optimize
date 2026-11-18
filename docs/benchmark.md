@@ -1,5 +1,7 @@
 # 测试方法与复现
 
+以下是三组共用的部署和编号 23 的发压步骤。编号 19 的输入负载与全程口径见[纯 P 报告](case19-pure-p.md)，编号 21 的完整启动和发压命令见[纯 D 复现](case21-pure-d.md#复现)。
+
 ## 软件和部署
 
 P/D 分别运行在同一 SuperPod 的两台 A3 服务器上。每台分配 8 张物理卡，每卡 2 DIE。模型为 DeepSeek-V4.1-Flash 1017 W4A8，使用 vLLM-Ascend 0.32.0rc1 A3 aarch64 镜像和 Host VMM 回移。运行版本、镜像构建标识、权重元数据与负载摘要见[实验清单](../results/manifest.json)。复测需要自行提供同版本镜像、检查点和有 Host VMM 支持的 CANN 运行时。
@@ -31,7 +33,7 @@ PD_LOG_DIR=local-runs/p-baseline python3 deploy/launch_node.py p --profile basel
 PD_LOG_DIR=local-runs/d-baseline python3 deploy/launch_node.py d --profile baseline
 ```
 
-两端用 `--profile optimized` 启动即可使用优化配置。`--dry-run` 打印隐藏节点地址和模型路径的 rank 参数。Proxy 脚本取自[实测使用的 vLLM-Ascend 修订](https://github.com/vllm-project/vllm-ascend/blob/24487f4f48ee99cf45d86d1c504e645549b8c1ef/examples/disaggregated_prefill_v1/load_balance_proxy_server_example.py)。在 P 服务器上设置 `PD_P_HOST` 和 `PD_D_HOST`，默认监听 P 的 8080，P/D 两端的 API port 从 7100 起递增。
+编号 23 的优化版在两端都用 `--profile optimized`。`--dry-run` 打印隐藏节点地址和模型路径的 rank 参数。Proxy 脚本取自[实测使用的 vLLM-Ascend 修订](https://github.com/vllm-project/vllm-ascend/blob/24487f4f48ee99cf45d86d1c504e645549b8c1ef/examples/disaggregated_prefill_v1/load_balance_proxy_server_example.py)。在 P 服务器上设置 `PD_P_HOST` 和 `PD_D_HOST`，默认监听 P 的 8080，P/D 两端的 API port 从 7100 起递增。
 
 ```bash
 export PD_PROXY_SCRIPT="$VLLM_ASCEND_SRC/examples/disaggregated_prefill_v1/load_balance_proxy_server_example.py"

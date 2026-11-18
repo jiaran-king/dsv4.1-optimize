@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="575" viewBox="0 0 1040 575">
+<rect width="1040" height="575" fill="white"/>
+<g font-family="PingFang SC,Noto Sans CJK SC,Arial,sans-serif" fill="#182c40">
+<text x="34.0" y="48.0" fill="#182c40" text-anchor="start" font-size="28" font-weight="700">编号 21 · D 侧单卡输出吞吐与 TPOT</text>
+<text x="36.0" y="76.0" fill="#435f73" text-anchor="start" font-size="13" font-weight="400">贵安 A3 1P1D · 128K/1K · 单前缀 · AISBench 稳态窗口</text>
+<rect x="106" y="113" width="720.0" height="333" fill="#eff8f3"/>
+<line x1="106.0" y1="446.0" x2="970.0" y2="446.0" stroke="#dbe4ec"/>
+<text x="96.0" y="450.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,500</text>
+<line x1="106.0" y1="379.4" x2="970.0" y2="379.4" stroke="#dbe4ec"/>
+<text x="96.0" y="383.4" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,750</text>
+<line x1="106.0" y1="312.8" x2="970.0" y2="312.8" stroke="#dbe4ec"/>
+<text x="96.0" y="316.8" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,000</text>
+<line x1="106.0" y1="246.2" x2="970.0" y2="246.2" stroke="#dbe4ec"/>
+<text x="96.0" y="250.2" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,250</text>
+<line x1="106.0" y1="179.6" x2="970.0" y2="179.6" stroke="#dbe4ec"/>
+<text x="96.0" y="183.6" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,500</text>
+<line x1="106.0" y1="113.0" x2="970.0" y2="113.0" stroke="#dbe4ec"/>
+<text x="96.0" y="117.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,750</text>
+<line x1="106.0" y1="446.0" x2="106.0" y2="451.0" stroke="#8094a6"/>
+<text x="106.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">25</text>
+<line x1="250.0" y1="446.0" x2="250.0" y2="451.0" stroke="#8094a6"/>
+<text x="250.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">30</text>
+<line x1="394.0" y1="446.0" x2="394.0" y2="451.0" stroke="#8094a6"/>
+<text x="394.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">35</text>
+<line x1="538.0" y1="446.0" x2="538.0" y2="451.0" stroke="#8094a6"/>
+<text x="538.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">40</text>
+<line x1="682.0" y1="446.0" x2="682.0" y2="451.0" stroke="#8094a6"/>
+<text x="682.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">45</text>
+<line x1="826.0" y1="446.0" x2="826.0" y2="451.0" stroke="#8094a6"/>
+<text x="826.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">50</text>
+<line x1="970.0" y1="446.0" x2="970.0" y2="451.0" stroke="#8094a6"/>
+<text x="970.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">55</text>
+<line x1="106.0" y1="446.0" x2="970.0" y2="446.0" stroke="#8094a6"/>
+<line x1="826.0" y1="113.0" x2="826.0" y2="446.0" stroke="#ac522b" stroke-dasharray="5 4"/>
+<text x="821.0" y="106.0" fill="#ac522b" text-anchor="end" font-size="13" font-weight="400">50 ms 门限</text>
+<line x1="106.0" y1="197.7" x2="970.0" y2="197.7" stroke="#ac522b" stroke-dasharray="5 4"/>
+<text x="962.0" y="190.7" fill="#ac522b" text-anchor="end" font-size="13" font-weight="400">+30% · 2,432</text>
+<text x="538.0" y="496.0" fill="#182c40" text-anchor="middle" font-size="15" font-weight="400">稳态平均 TPOT（ms）</text>
+<g transform="translate(28 280) rotate(-90)">
+<text x="0.0" y="0.0" fill="#182c40" text-anchor="middle" font-size="15" font-weight="400">D 侧单卡输出吞吐（tok/s/卡）</text>
+</g>
+<polyline points="262.8,347.2 455.2,286.2 553.8,283.7 554.1,285.6" fill="none" stroke="#346a9c" stroke-opacity=".52"/>
+<circle cx="262.8" cy="347.2" r="4 " fill="#346a9c" stroke="#346a9c"><title>上轮部署 · C512 · 1,871 tok/s/卡 · 30.45 ms</title></circle>
+<circle cx="455.2" cy="286.2" r="4 " fill="#346a9c" stroke="#346a9c"><title>上轮部署 · C768 · 2,100 tok/s/卡 · 37.12 ms</title></circle>
+<circle cx="553.8" cy="283.7" r="6.5 " fill="#346a9c" stroke="#346a9c"><title>上轮部署 · C896 · 2,109 tok/s/卡 · 40.55 ms</title></circle>
+<text x="562.8" y="272.7" fill="#346a9c" text-anchor="start" font-size="12" font-weight="700">C896 · 2,109</text>
+<circle cx="554.1" cy="285.6" r="4 " fill="#346a9c" stroke="#346a9c"><title>上轮部署 · C1024 · 2,102 tok/s/卡 · 40.56 ms</title></circle>
+<circle cx="106" cy="535" r="4" fill="#346a9c"/>
+<text x="117.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">上轮部署</text>
+<polyline points="640.6,266.5 630.5,288.3 648.5,244.1" fill="none" stroke="#23836e" stroke-opacity=".52"/>
+<circle cx="640.6" cy="266.5" r="4 " fill="#23836e" stroke="#23836e"><title>D 批次 768 · 不限速 · C1024 · 2,174 tok/s/卡 · 43.56 ms</title></circle>
+<circle cx="630.5" cy="288.3" r="4 " fill="#23836e" stroke="#23836e"><title>D 批次 768 · 不限速 · C1152 · 2,092 tok/s/卡 · 43.21 ms</title></circle>
+<circle cx="648.5" cy="244.1" r="6.5 " fill="#23836e" stroke="#23836e"><title>D 批次 768 · 不限速 · C1280 · 2,258 tok/s/卡 · 43.84 ms</title></circle>
+<text x="657.5" y="233.1" fill="#23836e" text-anchor="start" font-size="12" font-weight="700">C1280 · 2,258</text>
+<circle cx="283" cy="535" r="4" fill="#23836e"/>
+<text x="294.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">D 批次 768 · 不限速</text>
+<polyline points="659.1,195.5" fill="none" stroke="#9259a1" stroke-opacity=".52"/>
+<circle cx="659.1" cy="195.5" r="6.5 " fill="#9259a1" stroke="#9259a1"><title>D 批次 768 · 26 req/s · C1280 · 2,440 tok/s/卡 · 44.20 ms</title></circle>
+<text x="668.1" y="184.5" fill="#9259a1" text-anchor="start" font-size="12" font-weight="700">C1280 · 2,440</text>
+<circle cx="460" cy="535" r="4" fill="#9259a1"/>
+<text x="471.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">D 批次 768 · 26 req/s</text>
+</g>
+</svg>

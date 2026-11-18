@@ -11,7 +11,11 @@ from pathlib import Path
 def parse_args():
     parser = argparse.ArgumentParser(description="Start one side of the A3 1P1D service.")
     parser.add_argument("role", choices=("p", "d"))
-    parser.add_argument("--profile", choices=("baseline", "graph78", "optimized"), default="baseline")
+    parser.add_argument(
+        "--profile",
+        choices=("baseline", "graph78", "optimized", "case21-round1", "case21-round2"),
+        default="baseline",
+    )
     for flag, env_var, value_type in (
         ("--model-path", "PD_MODEL_PATH", Path),
         ("--local-ip", "PD_LOCAL_IP", str),
@@ -117,16 +121,20 @@ def engine_specs(args):
         sizes = args.tuning["decode_graph_capture_sizes"]
         if sizes is not None:
             compilation["cudagraph_capture_sizes"] = sizes
+        batch_tokens = args.tuning.get("decode_batch_tokens", 512)
+        prefix_reuse = args.tuning.get("decode_local_prefix_reuse", False)
         role_flags = [
-            "--max-num-batched-tokens", "512", "--max-num-seqs", "72", "--gpu-memory-utilization", "0.95",
-            "--async-scheduling", "--no-enable-prefix-caching", "--no-swa-bounded-replay",
+            "--max-num-batched-tokens", str(batch_tokens),
+            "--max-num-seqs", "72", "--gpu-memory-utilization", "0.95", "--async-scheduling",
+            "--enable-prefix-caching" if prefix_reuse else "--no-enable-prefix-caching",
+            "--swa-bounded-replay" if prefix_reuse else "--no-swa-bounded-replay",
             "--compilation-config", json.dumps(compilation),
         ]
         additional.update(
             ascend_compilation_config={"enable_npugraph_ex": True, "enable_static_kernel": False},
             enable_flashcomm1=False,
             multistream_overlap_shared_expert=True,
-            recompute_scheduler_enable=True,
+            recompute_scheduler_enable=not prefix_reuse,
         )
 
     for rank in range(dp_size):

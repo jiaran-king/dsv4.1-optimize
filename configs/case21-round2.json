@@ -1,0 +1,6 @@
+{
+  "prefill_renderer_workers": 4,
+  "decode_graph_capture_sizes": null,
+  "decode_batch_tokens": 768,
+  "decode_local_prefix_reuse": true
+}

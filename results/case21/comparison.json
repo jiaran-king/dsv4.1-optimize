@@ -1,0 +1,99 @@
+{
+  "scenario": "21-pure-d-high-throughput",
+  "workload": {
+    "requests": 4608,
+    "input_tokens": 131072,
+    "output_tokens": 1024,
+    "prefix_cache_target_pct": 100,
+    "prompt_row_sha256": "7cb4980ccf150dc57c95ac9cbdd731545edc1bdb2bee0e31d6c25a27b28241cd",
+    "generation": {
+      "temperature": 0,
+      "ignore_eos": true,
+      "seed": 1024
+    }
+  },
+  "deployment": {
+    "backend": "Ascend A3",
+    "prefill_physical_cards": 8,
+    "decode_physical_cards": 8,
+    "prefill_parallelism": "DP4/PCP4/TP1",
+    "decode_parallelism": "DP16/TP1/EP16",
+    "model": "DeepSeek V4.1 Flash 1017 W4A8",
+    "image": "v0.32.0rc1 build 20261111",
+    "host_vmm_backport": 21623,
+    "shared_engram": true,
+    "dspark_tokens": 5,
+    "vllm_revision": "5df63a7203cdb9328d824a27b682e77c7b9928be",
+    "ascend_revision": "24487f4f48ee99cf45d86d1c504e645549b8c1ef",
+    "inferrsi_revision": "8aba657da79e8ed9f6e6fbb33437e9d9fdd8f1c7",
+    "same_superpod": true,
+    "profiles": {
+      "baseline": "baseline",
+      "round1": "case21-round1",
+      "round2": "case21-round2"
+    }
+  },
+  "acceptance": {
+    "window": "AISBench StablePerfMetricCalculator start-selected requests",
+    "mean_tpot_limit_ms": 50,
+    "minimum_gain_pct_per_round": 30,
+    "repetitions_per_profile": 2
+  },
+  "reference": {
+    "concurrency": 1152,
+    "request_rate": 0,
+    "ttft_mean_ms": 66289.4,
+    "tpot_mean_ms": 30.8,
+    "tpot_p90_ms": 35.2,
+    "output_tok_s_d_card": 1456.69,
+    "steady_requests_inferred": 3456,
+    "replay_trial": "ref-c1152"
+  },
+  "formal": {
+    "baseline": {
+      "trials": [
+        "base-c384-a",
+        "base-c384-b"
+      ],
+      "concurrency": 384,
+      "request_rate": 0.0,
+      "output_tok_s_d_card": 1353.4984749573255,
+      "full_output_tok_s_d_card": 1316.0981681807739,
+      "ttft_mean_ms": 12007.500020663072,
+      "tpot_mean_ms": 23.11342473744319,
+      "tpot_p90_ms": 26.262193591707636
+    },
+    "round1": {
+      "trials": [
+        "round1-c512-a",
+        "round1-c512-b"
+      ],
+      "concurrency": 512,
+      "request_rate": 0.0,
+      "output_tok_s_d_card": 1870.7050605766408,
+      "full_output_tok_s_d_card": 1806.679543700864,
+      "ttft_mean_ms": 2712.120887534692,
+      "tpot_mean_ms": 30.44508266957559,
+      "tpot_p90_ms": 34.391675848291484
+    },
+    "round2": {
+      "trials": [
+        "round2-c1280-rr26-a",
+        "round2-c1280-rr26-b"
+      ],
+      "concurrency": 1280,
+      "request_rate": 26.0,
+      "output_tok_s_d_card": 2440.2996404342493,
+      "full_output_tok_s_d_card": 2209.4057885773364,
+      "ttft_mean_ms": 19880.773305590865,
+      "tpot_mean_ms": 44.203746388680486,
+      "tpot_p90_ms": 51.111802275719086
+    }
+  },
+  "gain_pct": {
+    "round1_vs_baseline": 38.21257246969727,
+    "round2_vs_round1": 30.44812310937097,
+    "round2_vs_baseline": 80.29570668789927,
+    "round2_full_vs_round1_full": 22.290961686072674
+  }
+}

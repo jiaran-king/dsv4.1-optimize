@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="575" viewBox="0 0 1040 575">
+<rect width="1040" height="575" fill="white"/>
+<g font-family="PingFang SC,Noto Sans CJK SC,Arial,sans-serif" fill="#182c40">
+<text x="34.0" y="48.0" fill="#182c40" text-anchor="start" font-size="28" font-weight="700">编号 21 · D 侧单卡输出吞吐与 TPOT</text>
+<text x="36.0" y="76.0" fill="#435f73" text-anchor="start" font-size="13" font-weight="400">贵安 A3 1P1D · 128K/1K · 单前缀 · AISBench 稳态窗口</text>
+<rect x="106" y="113" width="756.0" height="333" fill="#eff8f3"/>
+<line x1="106.0" y1="446.0" x2="970.0" y2="446.0" stroke="#dbe4ec"/>
+<text x="96.0" y="450.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">750</text>
+<line x1="106.0" y1="390.5" x2="970.0" y2="390.5" stroke="#dbe4ec"/>
+<text x="96.0" y="394.5" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,000</text>
+<line x1="106.0" y1="335.0" x2="970.0" y2="335.0" stroke="#dbe4ec"/>
+<text x="96.0" y="339.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,250</text>
+<line x1="106.0" y1="279.5" x2="970.0" y2="279.5" stroke="#dbe4ec"/>
+<text x="96.0" y="283.5" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,500</text>
+<line x1="106.0" y1="224.0" x2="970.0" y2="224.0" stroke="#dbe4ec"/>
+<text x="96.0" y="228.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">1,750</text>
+<line x1="106.0" y1="168.5" x2="970.0" y2="168.5" stroke="#dbe4ec"/>
+<text x="96.0" y="172.5" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,000</text>
+<line x1="106.0" y1="113.0" x2="970.0" y2="113.0" stroke="#dbe4ec"/>
+<text x="96.0" y="117.0" fill="#516879" text-anchor="end" font-size="13" font-weight="400">2,250</text>
+<line x1="106.0" y1="446.0" x2="106.0" y2="451.0" stroke="#8094a6"/>
+<text x="106.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">15</text>
+<line x1="214.0" y1="446.0" x2="214.0" y2="451.0" stroke="#8094a6"/>
+<text x="214.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">20</text>
+<line x1="322.0" y1="446.0" x2="322.0" y2="451.0" stroke="#8094a6"/>
+<text x="322.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">25</text>
+<line x1="430.0" y1="446.0" x2="430.0" y2="451.0" stroke="#8094a6"/>
+<text x="430.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">30</text>
+<line x1="538.0" y1="446.0" x2="538.0" y2="451.0" stroke="#8094a6"/>
+<text x="538.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">35</text>
+<line x1="646.0" y1="446.0" x2="646.0" y2="451.0" stroke="#8094a6"/>
+<text x="646.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">40</text>
+<line x1="754.0" y1="446.0" x2="754.0" y2="451.0" stroke="#8094a6"/>
+<text x="754.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">45</text>
+<line x1="862.0" y1="446.0" x2="862.0" y2="451.0" stroke="#8094a6"/>
+<text x="862.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">50</text>
+<line x1="970.0" y1="446.0" x2="970.0" y2="451.0" stroke="#8094a6"/>
+<text x="970.0" y="469.0" fill="#516879" text-anchor="middle" font-size="13" font-weight="400">55</text>
+<line x1="106.0" y1="446.0" x2="970.0" y2="446.0" stroke="#8094a6"/>
+<line x1="862.0" y1="113.0" x2="862.0" y2="446.0" stroke="#ac522b" stroke-dasharray="5 4"/>
+<text x="857.0" y="106.0" fill="#ac522b" text-anchor="end" font-size="13" font-weight="400">50 ms 门限</text>
+<line x1="106.0" y1="221.9" x2="970.0" y2="221.9" stroke="#ac522b" stroke-dasharray="5 4"/>
+<text x="962.0" y="214.9" fill="#ac522b" text-anchor="end" font-size="13" font-weight="400">+30% · 1,760</text>
+<text x="538.0" y="496.0" fill="#182c40" text-anchor="middle" font-size="15" font-weight="400">稳态平均 TPOT（ms）</text>
+<g transform="translate(28 280) rotate(-90)">
+<text x="0.0" y="0.0" fill="#182c40" text-anchor="middle" font-size="15" font-weight="400">D 侧单卡输出吞吐（tok/s/卡）</text>
+</g>
+<polyline points="261.7,330.3 281.2,312.0 255.4,342.7 270.0,320.9 261.6,338.1" fill="none" stroke="#346a9c" stroke-opacity=".52"/>
+<circle cx="261.7" cy="330.3" r="4 " fill="#346a9c" stroke="#346a9c"><title>原部署 · C256 · 1,271 tok/s/卡 · 22.21 ms</title></circle>
+<circle cx="281.2" cy="312.0" r="6.5 " fill="#346a9c" stroke="#346a9c"><title>原部署 · C384 · 1,353 tok/s/卡 · 23.11 ms</title></circle>
+<text x="290.2" y="301.0" fill="#346a9c" text-anchor="start" font-size="12" font-weight="700">C384 · 1,353</text>
+<circle cx="255.4" cy="342.7" r="4 " fill="#346a9c" stroke="#346a9c"><title>原部署 · C512 · 1,215 tok/s/卡 · 21.92 ms</title></circle>
+<circle cx="270.0" cy="320.9" r="4 " fill="#346a9c" stroke="#346a9c"><title>原部署 · C768 · 1,314 tok/s/卡 · 22.59 ms</title></circle>
+<circle cx="261.6" cy="338.1" r="4 " fill="#346a9c" stroke="#346a9c"><title>原部署 · C1152 · 1,236 tok/s/卡 · 22.20 ms</title></circle>
+<circle cx="106" cy="535" r="4" fill="#346a9c"/>
+<text x="117.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">原部署</text>
+<polyline points="361.6,245.6 374.7,233.3" fill="none" stroke="#23836e" stroke-opacity=".52"/>
+<circle cx="361.6" cy="245.6" r="4 " fill="#23836e" stroke="#23836e"><title>仅改 P renderer · C384 · 1,653 tok/s/卡 · 26.83 ms</title></circle>
+<circle cx="374.7" cy="233.3" r="6.5 " fill="#23836e" stroke="#23836e"><title>仅改 P renderer · C512 · 1,708 tok/s/卡 · 27.44 ms</title></circle>
+<text x="383.7" y="252.3" fill="#23836e" text-anchor="start" font-size="12" font-weight="700">C512 · 1,708</text>
+<circle cx="283" cy="535" r="4" fill="#23836e"/>
+<text x="294.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">仅改 P renderer</text>
+<polyline points="439.6,197.2" fill="none" stroke="#9259a1" stroke-opacity=".52"/>
+<circle cx="439.6" cy="197.2" r="6.5 " fill="#9259a1" stroke="#9259a1"><title>P renderer + D 前缀复用 · C512 · 1,871 tok/s/卡 · 30.45 ms</title></circle>
+<text x="448.6" y="186.2" fill="#9259a1" text-anchor="start" font-size="12" font-weight="700">C512 · 1,871</text>
+<circle cx="460" cy="535" r="4" fill="#9259a1"/>
+<text x="471.0" y="539.0" fill="#516879" text-anchor="start" font-size="13" font-weight="400">P renderer + D 前缀复用</text>
+</g>
+</svg>
