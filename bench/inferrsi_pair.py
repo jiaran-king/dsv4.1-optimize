@@ -47,13 +47,13 @@ def main():
         "--prefill-host", args.prefill_host, "--prefill-api-port", str(args.prefill_api_port),
         "--output", str(output / "candidate"),
     )
-    replay = "import json, pathlib, sys; print('RSI_RESULT ' + json.dumps(json.loads(pathlib.Path(sys.argv[1]).read_text())))"
+    replay = "from shutil import copyfile; from sys import argv; copyfile(argv[1], argv[2])"
     revision = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
     spec = RunSpec(
         repo=str(ROOT), repo_type="vllm_ascend", revision=revision,
         backend="ascend", device="A3", model="DeepSeek-V4.1-Flash", model_revision="1017 W4A8",
         scenario="dsv41_pd_128k_1k_c216", workload_id=workload_hash,
-        baseline_command=(sys.executable, "-c", replay, str(reference)),
+        baseline_command=(sys.executable, "-c", replay, str(reference), "{result}"),
         candidate_command=candidate, repetitions=1, direction="maximize",
         metric_key="metrics.output_tok_s_d_card", metric_unit="tok/s/D card",
         comparison_scope="prefill_renderer_workers",
@@ -64,7 +64,7 @@ def main():
         "comparison": "Graph78 worker 1 versus graph78 worker 4",
         "baseline_replayed": True,
         "baseline_result_sha256": hashlib.sha256(reference.read_bytes()).hexdigest(),
-        "retained_decode_and_proxy": "operator-verified",
+        "control": "Retain the same Decode and Proxy processes between arms",
     })
     print(report_dir)
 

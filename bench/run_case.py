@@ -124,9 +124,12 @@ def run(args):
             "mean_tpot_within_limit": selected is not None and selected["tpot_ms_mean"] < 21.0,
         },
     }
-    (output / "result.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    result_json = json.dumps(result, indent=2) + "\n"
+    (output / "result.json").write_text(result_json, encoding="utf-8")
     if args.case == "steady" and selected is None:
         raise ValueError("AISBench did not find a steady window")
+    if (result_path := os.getenv("INFERRSI_RESULT_PATH")) is not None:
+        Path(result_path).write_text(result_json, encoding="utf-8")
     print("RSI_RESULT " + json.dumps(result), flush=True)
 
 
