@@ -1,0 +1,32 @@
+{
+  "baseline": {
+    "concurrency": 216,
+    "runs": 2,
+    "runs_below_limit": 2,
+    "steady_requests_min": 360,
+    "steady_requests_max": 360,
+    "tpot_mean_ms": 18.74962494048772,
+    "tpot_mean_min_ms": 18.326281005900224,
+    "tpot_mean_max_ms": 19.172968875075213,
+    "tpot_p90_ms": 21.789579389968257,
+    "ttft_mean_ms": 3011.039092122681,
+    "output_tok_s_d_card": 1132.9199037945673
+  },
+  "optimized": {
+    "concurrency": 216,
+    "runs": 2,
+    "runs_below_limit": 2,
+    "steady_requests_min": 360,
+    "steady_requests_max": 360,
+    "tpot_mean_ms": 19.880719832594814,
+    "tpot_mean_min_ms": 19.863671965317877,
+    "tpot_mean_max_ms": 19.897767699871746,
+    "tpot_p90_ms": 22.86640407685063,
+    "ttft_mean_ms": 2321.4225611442494,
+    "output_tok_s_d_card": 1368.5361266768673
+  },
+  "peak_gain_pct": 20.797253370969493,
+  "prefill_worker_gain_pct": 14.012647650944853,
+  "trials_verified": 29,
+  "request_rows_verified": 16860
+}

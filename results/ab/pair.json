@@ -1,0 +1,19 @@
+{
+  "held_fixed": [
+    "Decode graph capture sizes (including 78)",
+    "Decode and Proxy processes",
+    "workload",
+    "concurrency"
+  ],
+  "baseline": {
+    "trial": "c216-graph78-workers1",
+    "prefill_renderer_workers": 1,
+    "relative_path": "trials.json",
+    "reused_measurement": true
+  },
+  "candidate": {
+    "trial": "c216-01",
+    "prefill_renderer_workers": 4,
+    "relative_path": "../optimized/trials.json"
+  }
+}

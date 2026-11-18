@@ -1,0 +1,39 @@
+{
+  "model": "DeepSeek-V4.1-Flash 1017 W4A8",
+  "checkpoint_metadata_sha256": {
+    "config.json": "43d3b2bc55626893d59275b32e04068c0fc916f5c382eb91de73bdbade9c88f7",
+    "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+  },
+  "container_build": "v0.32.0rc1-a3-openeuler-20261111103136_aarch64",
+  "platform": {
+    "device": "Ascend A3",
+    "placement": "Two servers in one SuperPod",
+    "prefill_cards": 8,
+    "decode_cards": 8,
+    "dies_per_card": 2
+  },
+  "revisions": {
+    "vllm": "5df63a7203cdb9328d824a27b682e77c7b9928be",
+    "vllm_ascend": "24487f4f48ee99cf45d86d1c504e645549b8c1ef",
+    "host_vmm_upstream": "dab870524ae2bc713ba51deae811488cadbe75e3",
+    "aisbench": "8b80c4e667657086b845879f61ae8a520db7f9fd",
+    "inferrsi": "61303fa8150472dfbda62ec8d77908bc05c73f3b"
+  },
+  "workload": {
+    "dataset_sha256": "05b429bee08ce6b13c4b63b6f5e492d220867646e1cfc48ae45aab00338451fa",
+    "tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+    "requests": 576,
+    "request_rate": "unlimited",
+    "input_tokens": 131072,
+    "output_tokens": 1024,
+    "shared_prefix_tokens": 131072,
+    "generation": {
+      "temperature": 0,
+      "ignore_eos": true,
+      "seed": 1024
+    },
+    "warmup": "one request through each P rank before measurement",
+    "statistic_selection": "AISBench request-start steady cohort"
+  },
+  "mean_tpot_limit_ms": 21
+}

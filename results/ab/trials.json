@@ -1,0 +1,39 @@
+[
+  {
+    "trial": "c216-graph78-workers1",
+    "concurrency": 216,
+    "peak_concurrency": 216,
+    "planned_requests": 576,
+    "completed_requests": 576,
+    "request_rate_per_s": 0,
+    "prefill_prefix_hit_rate": 0.9990310595021019,
+    "full": {
+      "requests": 576,
+      "duration_s": 75.5086581222713,
+      "input_tokens": 75497472,
+      "output_tokens": 589824,
+      "output_tok_s": 7811.342628349944,
+      "ttft_mean_ms": 6078.422392246365,
+      "tpot_mean_ms": 18.037690000943357,
+      "tpot_p90_ms": 20.88850237545671
+    },
+    "steady": {
+      "requests": 360,
+      "duration_s": 38.26761264912784,
+      "input_tokens": 47185920,
+      "output_tokens": 368640,
+      "output_tok_s": 9633.211336699409,
+      "ttft_mean_ms": 2899.287066800106,
+      "tpot_mean_ms": 17.80268643897537,
+      "tpot_p90_ms": 20.516814054595354,
+      "start_s": 16.801960496231914,
+      "end_s": 55.069573145359755
+    },
+    "qualification": {
+      "complete_workload": true,
+      "mean_tpot_within_slo": true,
+      "same_decode_process": true,
+      "fixed_input_and_concurrency": true
+    }
+  }
+]

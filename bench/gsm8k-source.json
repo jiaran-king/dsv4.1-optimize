@@ -1,0 +1,7 @@
+{
+  "source": "https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/test.jsonl",
+  "split": "test",
+  "rows": 1319,
+  "distinct_questions": 1319,
+  "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14"
+}

@@ -1,0 +1,16 @@
+{
+  "concurrency": 248,
+  "profile": "graph78",
+  "prefill_prefix_hit_rate": 0.9990310595021019,
+  "client_steady_requests": 328,
+  "client_steady_ttft_mean_ms": 5522.730357587201,
+  "prefill_engine_histogram": {
+    "n": 326.0,
+    "mean_ms": 229.06591208148862
+  },
+  "decode_ttft_histogram": {
+    "n": 326.0,
+    "mean_ms": 860.9380597717192
+  },
+  "server_samples": 9
+}

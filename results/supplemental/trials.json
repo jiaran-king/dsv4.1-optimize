@@ -1,0 +1,84 @@
+[
+  {
+    "trial": "smoke-c2",
+    "concurrency": 2,
+    "peak_concurrency": 2,
+    "planned_requests": 8,
+    "completed_requests": 8,
+    "request_rate_per_s": 1,
+    "prefill_prefix_hit_rate": 0.9118721914077104,
+    "full": {
+      "requests": 8,
+      "duration_s": 71.06756072491407,
+      "input_tokens": 1048576,
+      "output_tokens": 8192,
+      "output_tok_s": 115.27059485985903,
+      "ttft_mean_ms": 3651.9267715048045,
+      "tpot_mean_ms": 13.439093044124187,
+      "tpot_p90_ms": 15.281999265940774
+    },
+    "steady": {
+      "requests": 6,
+      "duration_s": 34.8528972864151,
+      "input_tokens": 786432,
+      "output_tokens": 6144,
+      "output_tok_s": 176.283766296663,
+      "ttft_mean_ms": 2117.345169186592,
+      "tpot_mean_ms": 13.896922347839569,
+      "tpot_p90_ms": 15.339867837311935,
+      "start_s": 20.667649935930967,
+      "end_s": 55.52054722234607
+    }
+  },
+  {
+    "trial": "full1300-c130",
+    "concurrency": 130,
+    "peak_concurrency": 96,
+    "planned_requests": 1300,
+    "completed_requests": 1300,
+    "request_rate_per_s": 3.6,
+    "prefill_prefix_hit_rate": 0.8996507940793099,
+    "full": {
+      "requests": 1300,
+      "duration_s": 380.27072783373296,
+      "input_tokens": 170393600,
+      "output_tokens": 1331200,
+      "output_tok_s": 3500.6638759269554,
+      "ttft_mean_ms": 3778.812549912299,
+      "tpot_mean_ms": 16.165632858186964,
+      "tpot_p90_ms": 18.814682580698154
+    },
+    "steady": null
+  },
+  {
+    "trial": "steady576-c144",
+    "concurrency": 144,
+    "peak_concurrency": 144,
+    "planned_requests": 576,
+    "completed_requests": 576,
+    "request_rate_per_s": 0,
+    "prefill_prefix_hit_rate": 0.9990310595021019,
+    "full": {
+      "requests": 576,
+      "duration_s": 101.73097799904644,
+      "input_tokens": 75497472,
+      "output_tokens": 589824,
+      "output_tok_s": 5797.87997325189,
+      "ttft_mean_ms": 4321.050763282175,
+      "tpot_mean_ms": 17.92912344260173,
+      "tpot_p90_ms": 20.096068175824563
+    },
+    "steady": {
+      "requests": 432,
+      "duration_s": 64.2741884496063,
+      "input_tokens": 56623104,
+      "output_tokens": 442368,
+      "output_tok_s": 6882.513971325136,
+      "ttft_mean_ms": 2309.8677821172814,
+      "tpot_mean_ms": 17.964504437733453,
+      "tpot_p90_ms": 20.006921091540292,
+      "start_s": 15.649813737720251,
+      "end_s": 79.92400218732655
+    }
+  }
+]

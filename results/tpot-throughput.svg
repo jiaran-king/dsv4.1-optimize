@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="565" viewBox="0 0 1000 565" font-family="PingFang SC, Helvetica Neue, sans-serif">
+<title>贵安 A3 的单卡输出吞吐与 TPOT 实测对比</title>
+<rect width="1000" height="565" fill="#ffffff"/>
+<text x="34.00" y="50.00" fill="#192e42" font-size="25" font-weight="700" text-anchor="start">单卡输出吞吐与 TPOT</text>
+<text x="34.00" y="76.00" fill="#546f84" font-size="13" font-weight="400" text-anchor="start">DeepSeek V4.1 · 贵安 A3 1P1D · 576 条 128K/1K · 100% 单前缀</text>
+<rect x="99" y="116" width="760.81" height="349" fill="#eef6f4"/>
+<line x1="209.22" y1="116.00" x2="209.22" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="209.22" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">16</text>
+<line x1="339.34" y1="116.00" x2="339.34" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="339.34" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">17</text>
+<line x1="469.45" y1="116.00" x2="469.45" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="469.45" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">18</text>
+<line x1="599.57" y1="116.00" x2="599.57" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="599.57" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">19</text>
+<line x1="729.69" y1="116.00" x2="729.69" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="729.69" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">20</text>
+<line x1="859.81" y1="116.00" x2="859.81" y2="465.00" stroke="#e0e7eb" stroke-dasharray="3 4"/>
+<text x="859.81" y="487.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">21</text>
+<line x1="99.00" y1="450.80" x2="963.00" y2="450.80" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="454.80" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">700</text>
+<line x1="99.00" y1="405.77" x2="963.00" y2="405.77" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="409.77" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">800</text>
+<line x1="99.00" y1="360.75" x2="963.00" y2="360.75" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="364.75" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">900</text>
+<line x1="99.00" y1="315.72" x2="963.00" y2="315.72" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="319.72" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">1,000</text>
+<line x1="99.00" y1="270.69" x2="963.00" y2="270.69" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="274.69" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">1,100</text>
+<line x1="99.00" y1="225.66" x2="963.00" y2="225.66" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="229.66" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">1,200</text>
+<line x1="99.00" y1="180.63" x2="963.00" y2="180.63" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="184.63" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">1,300</text>
+<line x1="99.00" y1="135.60" x2="963.00" y2="135.60" stroke="#e0e7eb" stroke-dasharray="none"/>
+<text x="89.00" y="139.60" fill="#546f84" font-size="12" font-weight="400" text-anchor="end">1,400</text>
+<line x1="859.81" y1="116.00" x2="859.81" y2="465.00" stroke="#b34f19" stroke-dasharray="4 4"/>
+<text x="859.81" y="105.00" fill="#b34f19" font-size="11" font-weight="600" text-anchor="middle">21 ms 限值</text>
+<line x1="99.00" y1="153.84" x2="963.00" y2="153.84" stroke="#795aa5" stroke-dasharray="5 5"/>
+<text x="109.00" y="145.84" fill="#6a4c94" font-size="11" font-weight="600" text-anchor="start">+20% 目标 · 1,359.5 tok/s/卡</text>
+<polyline points="183.58,440.68 304.78,392.36 462.80,360.39 513.15,324.34 464.01,281.09 499.04,259.12 566.99,255.87 788.81,276.12 536.53,272.91 837.52,273.08 629.72,266.98 867.62,278.96" fill="none" stroke="#546f84" stroke-opacity="0.35" stroke-width="1.2"/>
+<circle cx="183.58" cy="440.68" r="4" fill="#546f84"/>
+<circle cx="304.78" cy="392.36" r="4" fill="#546f84"/>
+<circle cx="462.80" cy="360.39" r="4" fill="#546f84"/>
+<circle cx="513.15" cy="324.34" r="4" fill="#546f84"/>
+<circle cx="464.01" cy="281.09" r="4" fill="#546f84"/>
+<circle cx="499.04" cy="259.12" r="4" fill="#546f84"/>
+<circle cx="566.99" cy="255.87" r="4" fill="#546f84"/>
+<circle cx="788.81" cy="276.12" r="4" fill="#546f84"/>
+<circle cx="536.53" cy="272.91" r="4" fill="#546f84"/>
+<circle cx="837.52" cy="273.08" r="4" fill="#546f84"/>
+<circle cx="629.72" cy="266.98" r="4" fill="#546f84"/>
+<circle cx="867.62" cy="278.96" r="4" fill="#b34f19"/>
+<polyline points="714.17,149.77 740.23,160.39 793.78,179.43 871.92,186.96" fill="none" stroke="#0f826b" stroke-opacity="0.35" stroke-width="1.2"/>
+<circle cx="714.17" cy="149.77" r="4" fill="#0f826b"/>
+<circle cx="740.23" cy="160.39" r="4" fill="#0f826b"/>
+<circle cx="793.78" cy="179.43" r="4" fill="#0f826b"/>
+<circle cx="871.92" cy="186.96" r="4" fill="#b34f19"/>
+<circle cx="566.99" cy="255.87" r="6" fill="#546f84"/>
+<rect x="483.99" y="269.87" width="166" height="41" rx="5" fill="white" stroke="#546f84" stroke-opacity="0.27"/>
+<text x="493.99" y="285.87" fill="#546f84" font-size="11" font-weight="600" text-anchor="start">基线最高 · 并发 216</text>
+<text x="493.99" y="302.87" fill="#192e42" font-size="11" font-weight="400" text-anchor="start">18.75 ms · 1,133 tok/s/卡</text>
+<circle cx="714.17" cy="149.77" r="6" fill="#0f826b"/>
+<rect x="631.17" y="97.77" width="166" height="41" rx="5" fill="white" stroke="#0f826b" stroke-opacity="0.27"/>
+<text x="641.17" y="113.77" fill="#0f826b" font-size="11" font-weight="600" text-anchor="start">优化后最高 · 并发 216</text>
+<text x="641.17" y="130.77" fill="#192e42" font-size="11" font-weight="400" text-anchor="start">19.88 ms · 1,369 tok/s/卡</text>
+<text x="531.00" y="510.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">稳态平均 TPOT（ms）</text>
+<g transform="translate(41 302) rotate(-90)">
+<text x="0.00" y="0.00" fill="#546f84" font-size="12" font-weight="400" text-anchor="middle">D 侧单卡输出吞吐（tok/s/卡）</text>
+</g>
+<circle cx="38.00" cy="538.00" r="4" fill="#546f84"/>
+<text x="49.00" y="542.00" fill="#546f84" font-size="11" font-weight="400" text-anchor="start">基线</text>
+<circle cx="106.00" cy="538.00" r="4" fill="#0f826b"/>
+<text x="117.00" y="542.00" fill="#546f84" font-size="11" font-weight="400" text-anchor="start">优化后</text>
+<circle cx="190.00" cy="538.00" r="4" fill="#b34f19"/>
+<text x="201.00" y="542.00" fill="#546f84" font-size="11" font-weight="400" text-anchor="start">存在超限或生成检查未达标</text>
+<text x="366.00" y="542.00" fill="#546f84" font-size="11" font-weight="400" text-anchor="start">D 侧 8 张物理卡 · 复测取中位数</text>
+</svg>
