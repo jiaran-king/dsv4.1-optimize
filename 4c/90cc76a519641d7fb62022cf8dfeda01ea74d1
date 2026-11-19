@@ -1,0 +1,16 @@
+patches/case19/pcp-gather-overlap/README.md
+  h_77bd4dffd3013a 1-19
+patches/case19/pcp-gather-overlap/vllm-ascend.patch
+  h_77bd4dffd3013a 1-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4c90cc76a519641d7fb62022cf8dfeda01ea74d1",
+  "prompts": {},
+  "humans": {
+    "h_77bd4dffd3013a": {
+      "author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}
