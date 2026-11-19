@@ -1,0 +1,10 @@
+diff --git a/deploy/launch_node.py b/deploy/launch_node.py
+--- a/deploy/launch_node.py
++++ b/deploy/launch_node.py
+@@ -105,5 +105,5 @@
+         env["HCCL_OP_EXPANSION_MODE"] = "AIV"
+         role_flags = [
+-            "--max-num-batched-tokens", "8192", "--max-num-seqs", "16", "--gpu-memory-utilization", "0.90",
++            "--max-num-batched-tokens", "32768", "--max-num-seqs", "16", "--gpu-memory-utilization", "0.90",
+             "--enforce-eager", "--swa-bounded-replay", "--enable-prefix-caching",
+         ]
