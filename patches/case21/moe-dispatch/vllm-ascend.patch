@@ -1,0 +1,23 @@
+diff --git a/vllm_ascend/utils.py b/vllm_ascend/utils.py
+--- a/vllm_ascend/utils.py
++++ b/vllm_ascend/utils.py
+@@ -1367,6 +1367,19 @@
+     if not is_kv_consumer:
+         return False
+ 
++    # Use the per-step DP maximum and MC2's token mask for V4.1 Decode.
++    # The asynchronous fallback sizes dispatch for the full engine-wide
++    # request limit, even when a much smaller graph actually runs.
++    parallel = vllm_config.parallel_config
++    text_config = vllm_config.model_config.hf_text_config
++    if (
++        getattr(text_config, "model_type", None) in ("deepseek_v41", "deepseek_v41_text")
++        and parallel.data_parallel_size > 1
++        and parallel.tensor_parallel_size == 1
++        and parallel.enable_expert_parallel
++    ):
++        return False
++
+     from vllm_ascend.ascend_forward_context import select_moe_comm_method, use_cann_megamoe
+     from vllm_ascend.ops.fused_moe.moe_comm_method import MoECommType
+ 
