@@ -1,0 +1,9 @@
+diff --git a/configs/graph78.json b/configs/graph78.json
+--- a/configs/graph78.json
++++ b/configs/graph78.json
+@@ -1,4 +1,4 @@
+ {
+-  "prefill_renderer_workers": 1,
++  "prefill_renderer_workers": 4,
+   "decode_graph_capture_sizes": [
+     1,
