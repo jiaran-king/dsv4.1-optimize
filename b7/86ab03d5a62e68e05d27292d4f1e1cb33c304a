@@ -1,0 +1,16 @@
+patches/case21/ragged-swiglu/README.md
+  h_77bd4dffd3013a 1-24
+patches/case21/ragged-swiglu/vllm-ascend.patch
+  h_77bd4dffd3013a 1-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b786ab03d5a62e68e05d27292d4f1e1cb33c304a",
+  "prompts": {},
+  "humans": {
+    "h_77bd4dffd3013a": {
+      "author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}
