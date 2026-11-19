@@ -1,0 +1,48 @@
+--- a/vllm_ascend/worker/v2/model_runner.py
++++ b/vllm_ascend/worker/v2/model_runner.py
+@@ -61,6 +61,7 @@
+     select_moe_comm_method,
+     set_mc2_mask,
+     set_mc2_tokens_capacity,
++    use_cann_megamoe,
+ )
+ from vllm_ascend.attention.attention_c8_mxfp import (
+     AscendC8MXFPAttentionBackendImpl,
+@@ -862,7 +863,36 @@
+                         is_profile=True,
+                         **profile_kwargs,
+                     )
+-            super().profile_run(**profile_kwargs)
++            transfer = self.vllm_config.kv_transfer_config
++            parallel = self.vllm_config.parallel_config
++            # Real eager Prefill batches are partitioned across PCP devices. The
++            # attention-free startup dummy uses an already rank-local batch.
++            # Exercise the full MegaMoE rank capacity in the dummy while leaving
++            # the actual scheduler budget and execution guards intact.
++            if (
++                transfer is not None
++                and transfer.kv_role == "kv_producer"
++                and self.model_config.enforce_eager
++                and parallel.prefill_context_parallel_size == 4
++                and parallel.tensor_parallel_size == 1
++                and mc2_tokens_capacity == 16384
++                and mc2_tokens_capacity < self.max_num_tokens <= 32768
++                and self.max_num_reqs <= 16
++                and use_cann_megamoe(self.vllm_config)
++            ):
++                global_budget = self.max_num_tokens
++                logger.info(
++                    "Profiling eager PCP Prefill with local budget %s (scheduler budget %s)",
++                    mc2_tokens_capacity,
++                    global_budget,
++                )
++                self.max_num_tokens = mc2_tokens_capacity
++                try:
++                    super().profile_run(**profile_kwargs)
++                finally:
++                    self.max_num_tokens = global_budget
++            else:
++                super().profile_run(**profile_kwargs)
+ 
+     def gather_batch_req_state(self, scheduler_output: SchedulerOutput, dummy_run: bool):
+         batch_state, uniform_token_count = super().gather_batch_req_state(scheduler_output, dummy_run)
