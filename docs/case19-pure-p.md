@@ -2,6 +2,20 @@
 
 平均 TTFT 小于 10 秒时，P 侧单卡输入吞吐由 68,239 增至 **105,397 tok/s/卡（+54.45%）**。基线和最终优化各取两轮中位数，优化版选并发 52。两轮分别为 **105,444** 和 **105,349 tok/s/卡**，相差约 **0.09%**。 [对比结果](../results/case19/comparison.json)
 
+## 配置对照
+
+| 设置 | 正式基线 | 最终优化 |
+| --- | --- | --- |
+| P 每 rank 的 `--renderer-num-workers` | 1 | **4** |
+| P 的 `--max-num-batched-tokens` | 8,192 | **32,768** |
+| P 的 EPLB（`--enable-eplb`、`--eplb-config`） | 关 | **开**，STAIR 异步重排，使用 HIXL，`window_size=32`、`step_interval=40`、`num_redundant_experts=16` |
+| P 的 Engram 查表重叠 | 关 | **开** |
+| 正式发压并发上限 | 24 | **52** |
+
+32K 批次保留 MegaMoE。配套修复把启动时未做 PCP 分片的模拟批次限制在每 DIE 16,384 token，运行时每 P rank 的调度预算为 32,768 token。另在 P 侧回移了 PCP AllGather 与本地 Q 投影重叠。 [生效参数](../results/case19/comparison.json) · [PCP 重叠补丁 #21628](https://github.com/vllm-project/vllm-ascend/pull/21628)
+
+## 原表与实测
+
 | 对照 | 并发 | P 单卡输入吞吐（tok/s/卡） | 平均 TTFT（s） | TTFT P90（s） | 168 条全程（s） |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 原表 | 42 | 58,583 | 10.360 | 11.974 | 46.995 |
@@ -33,9 +47,7 @@
 
 并发和发压速率相同时，优化版比基线高 **51.75%**。开启 EPLB 前后在并发 42、同样不限速下的提升为 **33.58%**，两个点各测一轮。Renderer 单项变化约为 **−0.10%**。 [逐轮结果](../results/case19/trials.json)
 
-最终 P 使用 4 个 renderer worker 和 32,768 token 批次，保留 MegaMoE。启动时把未做 PCP 分片的模拟批次限制在每 DIE 16,384 token，实际调度预算仍为每 P rank 32,768 token。开启 Engram 查表重叠，并在 P 侧回移 PCP AllGather 与本地 Q 投影重叠。 [PCP 重叠补丁 #21628](https://github.com/vllm-project/vllm-ascend/pull/21628)
-
-EPLB 使用 `--enable-eplb` 和 `--eplb-config`，采用 STAIR 异步重排，`window_size=32`、`step_interval=40`、`num_redundant_experts=16`。重排先用独立的同源请求校准两轮，再用固定的正式评估集计时。 [校准与生效参数](../results/case19/comparison.json)
+EPLB 重排先用独立的同源请求校准两轮，再用固定的正式评估集计时。 [校准记录](../results/case19/comparison.json)
 
 现场按基线、优化的顺序采集。InferRSI 使用已采集的逐请求记录回算验收。两轮复测支持同一部署预热后的短轮复现，跨重启、长时间运行和长输出精度仍待验证。
 

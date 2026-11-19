@@ -6,16 +6,18 @@
 
 原表与正式复测每轮均发 4,608 条，单条 131,072 输入 token、1,024 输出 token，100% 单前缀。原表发压并发上限 1,152，发压速率设 0。实测使用编号 23 的 GSM8K 重构 prompt，P 实际前缀 token 命中率约 99.90%。P、D 各 8 张物理卡，经原 Proxy 发压，保持共享 Engram、DSpark 5、1M 上下文和 0.32.0rc1 默认解码图档。 [公共部署参数](benchmark.md#软件和部署)
 
-| 设置 | 基线 | 第一轮 | 第二轮 |
+## 配置对照
+
+| 设置 | 正式基线 | 第一轮优化 | 第二轮优化 |
 | --- | --- | --- | --- |
 | 启动配置 | [baseline](../configs/baseline.json) | [case21-round1](../configs/case21-round1.json) | [case21-round2](../configs/case21-round2.json) |
-| P 每 rank renderer 数 | 1 | 4 | 4 |
-| P 批次预算 | 8192 | 8192 | 8192 |
-| D 本地前缀缓存 / SWA bounded replay | 关 / 关 | 开 / 开 | 开 / 开 |
-| D 重算调度器 | 开 | 关 | 关 |
-| D 批次预算 | 512 | 512 | 768 |
-| 最终点客户端并发上限 | 384 | 512 | 1,280 |
-| 最终点发压速率 | 不限 | 不限 | 26 req/s |
+| P 每 rank 的 `--renderer-num-workers` | 1 | **4** | 4 |
+| D 本地前缀缓存 `--enable-prefix-caching` | 关 | **开** | 开 |
+| D 的 `--swa-bounded-replay` | 关 | **开** | 开 |
+| D 重算调度 `recompute_scheduler_enable` | 开 | **关** | 关 |
+| D 的 `--max-num-batched-tokens` | 512 | 512 | **768** |
+| 正式发压并发上限 | 384 | 512 | 1,280 |
+| 正式发压速率 | 不限 | 不限 | 26 req/s |
 
 编号 21 的基线按原 P 启动参数重测，P 与 D 的 EPLB 均关闭。P 保留默认的 8192 token 调度预算，D 设备内存比例为 0.95，最大序列数 72。
 
