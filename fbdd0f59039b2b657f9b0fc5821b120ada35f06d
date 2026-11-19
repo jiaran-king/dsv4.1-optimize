@@ -1,0 +1,21 @@
+README.md
+  s_139d1dd1d35143::t_105bf2ef992a35 5-6
+docs/overview.md
+  s_139d1dd1d35143::t_105bf2ef992a35 5-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fbdd0f59039b2b657f9b0fc5821b120ada35f06d",
+  "prompts": {},
+  "sessions": {
+    "s_139d1dd1d35143": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eed6-a0cb-7382-9c5f-6773417fd3ef",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    }
+  }
+}

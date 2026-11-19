@@ -1,0 +1,23 @@
+docs/case19-pure-p.md
+  s_139d1dd1d35143::t_05f724e6c7cd67 5-18,50
+docs/case21-pure-d.md
+  s_139d1dd1d35143::t_05f724e6c7cd67 9-11,14-20
+docs/overview.md
+  s_139d1dd1d35143::t_05f724e6c7cd67 35-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "216f1d8444f4e6ef20e886e1ead9af1486d1cd3f",
+  "prompts": {},
+  "sessions": {
+    "s_139d1dd1d35143": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eed6-a0cb-7382-9c5f-6773417fd3ef",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    }
+  }
+}

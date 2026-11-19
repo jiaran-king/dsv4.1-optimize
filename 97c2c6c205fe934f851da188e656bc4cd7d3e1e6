@@ -1,0 +1,92 @@
+bench/audit_benchmark.py
+  s_66eb5180839019::t_2224ef5bf83783 9-12,49-50,71,77-79,130-132
+  s_66eb5180839019::t_cde68e07b612b6 1-8,13-48,51-70,72-76,80-129,133-136
+bench/report.py
+  s_66eb5180839019::t_fc9722e3172b68 77-79
+  s_66eb5180839019::t_618468cc11c6ea 1-76,80-186
+results/supplemental/trials.json
+  s_66eb5180839019::t_5d28ac9ac4ad6e 1-84
+results/baseline/trials.json
+  s_66eb5180839019::t_996035797b5701 1-591
+.gitignore
+  s_66eb5180839019::t_2224ef5bf83783 1-9
+patches/build_host_vmm.py
+  s_66eb5180839019::t_ddc285f6de004a 1-87
+docs/optimization.md
+  s_66eb5180839019::t_fc9722e3172b68 11
+  s_66eb5180839019::t_5dcc4137dea619 1-10,12-35
+bench/gsm8k-source.json
+  s_66eb5180839019::t_cde68e07b612b6 1-7
+results/ab/trials.json
+  s_66eb5180839019::t_5d28ac9ac4ad6e 1-39
+configs/optimized.json
+  s_66eb5180839019::t_cde68e07b612b6 1-54
+patches/LICENSE
+  s_66eb5180839019::t_9165b14f5c01a6 1-201
+docs/benchmark.md
+  s_66eb5180839019::t_fc9722e3172b68 10
+  s_66eb5180839019::t_5dcc4137dea619 1-9,11-89
+patches/host-vmm-0.32.patch
+  s_66eb5180839019::t_cde68e07b612b6 1-295
+results/ab/prefill-diagnostic.json
+  s_66eb5180839019::t_fc9722e3172b68 1-16
+results/baseline/points.csv
+  s_66eb5180839019::t_618468cc11c6ea 1-13
+results/optimized/points.csv
+  s_66eb5180839019::t_618468cc11c6ea 1-5
+deploy/launch_proxy.sh
+  s_66eb5180839019::t_cde68e07b612b6 1-14,16-24
+  s_66eb5180839019::t_2224ef5bf83783 15
+bench/prepare_gsm8k_workload.py
+  s_66eb5180839019::t_2224ef5bf83783 71-72
+  s_66eb5180839019::t_cde68e07b612b6 1-70,73-185
+bench/inferrsi_pair.py
+  s_66eb5180839019::t_70c6ef2843be6e 1-73
+results/optimized/trials.json
+  s_66eb5180839019::t_996035797b5701 1-224
+bench/run_case.py
+  s_66eb5180839019::t_f3c1b7b6153541 1-149
+results/README.md
+  s_66eb5180839019::t_8a162a0f6752dd 14
+  s_66eb5180839019::t_5dcc4137dea619 1-13
+patches/README.md
+  s_66eb5180839019::t_5dcc4137dea619 1-15
+results/tpot-throughput.svg
+  s_66eb5180839019::t_8a162a0f6752dd 1-76
+results/manifest.json
+  s_66eb5180839019::t_5d28ac9ac4ad6e 1-39
+configs/graph78.json
+  s_66eb5180839019::t_cde68e07b612b6 1-54
+bench/calibrated_configs/datasets/calibrated_128k.py
+  s_66eb5180839019::t_cde68e07b612b6 1-16
+configs/baseline.json
+  s_66eb5180839019::t_cde68e07b612b6 1-4
+deploy/launch_node.py
+  s_66eb5180839019::t_06d45bc3b0953c 14-25,33-34,47,77-81,106-108,116-119,123
+  s_66eb5180839019::t_cde68e07b612b6 1-13,26-32,35-46,48-76,82-105,109-115,120-122,124-206
+results/ab/pair.json
+  s_66eb5180839019::t_5d28ac9ac4ad6e 1-19
+patches/sitecustomize.py
+  s_66eb5180839019::t_ddc285f6de004a 1-27
+results/comparison.json
+  s_66eb5180839019::t_618468cc11c6ea 1-32
+README.md
+  s_66eb5180839019::t_5dcc4137dea619 1-15,17-33
+  s_66eb5180839019::t_8a162a0f6752dd 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "97c2c6c205fe934f851da188e656bc4cd7d3e1e6",
+  "prompts": {},
+  "sessions": {
+    "s_66eb5180839019": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1e239-8b8a-7751-bd4f-d1c6b1ddbec3",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    }
+  }
+}

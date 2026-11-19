@@ -1,0 +1,72 @@
+results/case21/trials.json
+  s_139d1dd1d35143::t_671b8900ec0e31 1-926
+docs/case21-pure-d.md
+  s_139d1dd1d35143::t_8f24048073c9fd 75,78,83-90,92-94,100
+  s_139d1dd1d35143::t_79e07b97c34562 1-74,76-77,79-82,91,95-99
+docs/overview.md
+  s_139d1dd1d35143::t_79e07b97c34562 1-62
+docs/case19-pure-p.md
+  s_911265f0b71728::t_f539c8a7f58b19 1-2,4-17,19-42
+  s_911265f0b71728::t_a5b60b279974c5 3,18
+results/case19/ttft-throughput.svg
+  s_911265f0b71728::t_0f986d00fa1818 1-83
+docs/benchmark.md
+  s_139d1dd1d35143::t_8f24048073c9fd 3-4,36
+deploy/launch_node.py
+  s_139d1dd1d35143::t_105a3f06c2df4f 14-18,124-125,127-130,137
+bench/report_case19.py
+  s_911265f0b71728::t_f539c8a7f58b19 1-71,73-74,76-92,95,101-105,110,117-129,131-138
+  s_911265f0b71728::t_ce9981c4425bdd 72,75,96-100,106-109,111
+  s_911265f0b71728::t_a5b60b279974c5 93-94,112-116,130
+bench/report_case21.py
+  s_139d1dd1d35143::t_cd059744f5775b 1-71
+results/case21/round2.svg
+  s_139d1dd1d35143::t_671b8900ec0e31 1-63
+results/case21/round1.svg
+  s_139d1dd1d35143::t_671b8900ec0e31 1-69
+results/README.md
+  s_911265f0b71728::t_f539c8a7f58b19 3-4,17-19,21-22
+  s_139d1dd1d35143::t_79e07b97c34562 23-27
+  s_911265f0b71728::t_ce9981c4425bdd 20
+  s_139d1dd1d35143::t_8f24048073c9fd 28
+configs/case21-round1.json
+  s_139d1dd1d35143::t_105a3f06c2df4f 1-6
+configs/case21-round2.json
+  s_139d1dd1d35143::t_105a3f06c2df4f 1-6
+results/case19/comparison.json
+  s_911265f0b71728::t_0f986d00fa1818 1-135
+bench/run_case.py
+  s_139d1dd1d35143::t_105a3f06c2df4f 7,17-22,51,53-54,57-58,99,134,139,153
+README.md
+  s_139d1dd1d35143::t_cd059744f5775b 3,5,7-11,13,15-19,24,26,28,32-33
+results/case19/trials.json
+  s_911265f0b71728::t_0f986d00fa1818 1-839
+results/case21/comparison.json
+  s_139d1dd1d35143::t_671b8900ec0e31 1-99
+results/case19/points.csv
+  s_911265f0b71728::t_0f986d00fa1818 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "459163e6c7e1a55c91cb688b0d7594bd3014a991",
+  "prompts": {},
+  "sessions": {
+    "s_139d1dd1d35143": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eed6-a0cb-7382-9c5f-6773417fd3ef",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    },
+    "s_911265f0b71728": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1ed7e-a1ec-79b3-9a39-e3ba02be5c67",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "jiaran-king <jiaranran2@gmail.com>"
+    }
+  }
+}

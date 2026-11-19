@@ -1,0 +1,21 @@
+patches/case21/host-embedding/README.md
+  s_139d1dd1d35143::t_66179631ad33b8 1-21
+patches/case21/host-embedding/vllm-ascend.patch
+  s_139d1dd1d35143::t_575768069b774c 1-180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "947af8be6b58e102ef6bb4972f097cb7dcc646ee",
+  "prompts": {},
+  "sessions": {
+    "s_139d1dd1d35143": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eed6-a0cb-7382-9c5f-6773417fd3ef",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}
