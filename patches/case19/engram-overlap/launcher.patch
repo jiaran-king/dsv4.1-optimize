@@ -1,0 +1,9 @@
+diff --git a/deploy/launch_node.py b/deploy/launch_node.py
+--- a/deploy/launch_node.py
++++ b/deploy/launch_node.py
+@@ -116,4 +116,5 @@
+             enable_shared_expert_dp=tp_size == 1,
+             multistream_overlap_shared_expert=False,
++            multistream_engram_overlap=True,
+         )
+     else:
