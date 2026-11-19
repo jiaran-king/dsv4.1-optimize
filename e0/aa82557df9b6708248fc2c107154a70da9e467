@@ -1,0 +1,21 @@
+patches/case19/eplb-stair/README.md
+  s_139d1dd1d35143::t_39328ef62b4096 1-18
+patches/case19/eplb-stair/launcher.patch
+  s_139d1dd1d35143::t_5b29ec6918d1e6 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e0aa82557df9b6708248fc2c107154a70da9e467",
+  "prompts": {},
+  "sessions": {
+    "s_139d1dd1d35143": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eed6-a0cb-7382-9c5f-6773417fd3ef",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}
