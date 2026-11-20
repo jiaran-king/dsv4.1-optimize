@@ -1,0 +1,16 @@
+diff --git a/deploy/launch_node.py b/deploy/launch_node.py
+--- a/deploy/launch_node.py
++++ b/deploy/launch_node.py
+@@ -111,4 +111,12 @@
+         if workers != 1:
+             role_flags.extend(["--renderer-num-workers", str(workers)])
++        eplb = {
++            "window_size": 32,
++            "step_interval": 40,
++            "num_redundant_experts": 16,
++            "use_async": True,
++            "policy": "stair",
++        }
++        role_flags.extend(("--enable-eplb", "--eplb-config", json.dumps(eplb)))
+         additional.update(
+             enable_fused_mc2=2,
