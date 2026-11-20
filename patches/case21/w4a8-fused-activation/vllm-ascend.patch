@@ -1,0 +1,81 @@
+--- a/vllm_ascend/ops/fused_moe/moe_comm_method.py
++++ b/vllm_ascend/ops/fused_moe/moe_comm_method.py
+@@ -22,6 +22,7 @@
+ import torch
+ from vllm.logger import logger
+ from vllm.model_executor.layers.fused_moe import FusedMoEConfig
++from vllm.model_executor.layers.fused_moe.activation import MoEActivation
+ 
+ from vllm_ascend.ascend_config import get_ascend_config, is_mega_moe_supported
+ from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
+@@ -249,6 +250,70 @@
+     """
+ 
+     shared_activation_overlaps_routed_gmm1 = True
++
++    def fused_experts(self, fused_experts_input, quant_method=None):
++        # Keep the draft and unsupported expert schemes on ordinary MC2.
++        # The target can use the fused W4A8 kernel once the DP scheduler
++        # provides a common padded batch and a mask for actual token rows.
++        routing = fused_experts_input.routing
++        if (
++            not _EXTRA_CTX.is_decode_only_node
++            or self.token_dispatcher.global_bs != 0
++            or self.token_dispatcher.ep_world_size > 32
++            or quant_method is None
++            or fused_experts_input.quant.quant_type != QuantType.W4A8
++            # The fused kernel hard-codes SwiGLU, including its clamp.
++            or fused_experts_input.activation not in (MoEActivation.SILU, "silu")
++            or quant_method.use_expert_weight_list
++            or routing.apply_router_weight_on_input
++        ):
++            return super().fused_experts(fused_experts_input, quant_method)
++
++        weights = quant_method.get_fused_mc2_weights(fused_experts_input.layer)
++        x = fused_experts_input.hidden_states
++        expert_ids = fused_experts_input.topk_ids
++        # A rank cannot receive more than all padded tokens times top-k.
++        # This is the same bound for every rank in the uniform EP operation.
++        bound = x.shape[0] * expert_ids.shape[-1] * self.token_dispatcher.ep_world_size
++        if (
++            not bound
++            or bound > get_ascend_config().mega_moe_max_tokens
++            or weights.w1[0].dtype != torch.int32
++            or weights.w1_scale_bias is None
++            or weights.w2_scale_bias is None
++        ):
++            return super().fused_experts(fused_experts_input, quant_method)
++
++        ready = maybe_record_event()
++        output = torch.empty_like(x)
++        counts = torch.zeros(self.moe_config.num_local_experts, dtype=torch.int32, device=x.device)
++        torch.ops._C_ascend.dispatch_ffn_combine(
++            x=x,
++            weight1=weights.w1,
++            weight2=weights.w2,
++            expert_idx=expert_ids,
++            scale1=weights.w1_scale,
++            scale2=weights.w2_scale,
++            bias1=weights.w1_scale_bias,
++            bias2=weights.w2_scale_bias,
++            probs=fused_experts_input.topk_weights.to(torch.float32),
++            group=self.token_dispatcher.moe_all_to_all_group_name,
++            max_output_size=bound,
++            swiglu_limit=self.moe_config.swiglu_limit or 0.0,
++            world_size=self.token_dispatcher.ep_world_size,
++            x_active_mask=routing.mc2_mask,
++            out=output,
++            expert_token_nums=counts,
++        )
++        # The shared gate/up GEMM can begin alongside routed experts.
++        # Shared activation is vector work, so start it after the opaque
++        # dispatch/MLP/combine kernel releases the vector cores.
++        routed_done = maybe_record_event()
++        return FusedExpertsResult(
++            routed_out=output, before_dispatch_evt=ready,
++            before_combine_evt=routed_done,
++            shared_activation_overlap_start_evt=routed_done, expert_tokens=counts,
++        )
+ 
+     def pad_and_split_input_ids(self, input_ids):
+         return self.prepare_finalize.pad_and_split_input_ids(input_ids)  # type: ignore[attr-defined]
