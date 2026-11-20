@@ -1,0 +1,421 @@
+diff --git a/vllm_ascend/models/deepseek_v41/cache_config.py b/vllm_ascend/models/deepseek_v41/cache_config.py
+--- a/vllm_ascend/models/deepseek_v41/cache_config.py
++++ b/vllm_ascend/models/deepseek_v41/cache_config.py
+@@ -274,7 +274,13 @@
+     available_memory: int,
+ ) -> KVCacheConfig:
+     """Allocate independent layer slots backed by one global block-ID pool."""
+-    page_sizes, layer_tuples = get_layer_tuples(_specs_from_groups(groups))
++    from vllm_ascend.core.next20_compact_kv import plan_decode_cache
++
++    specs = _specs_from_groups(groups)
++    page_sizes, layer_tuples = get_layer_tuples(specs)
++    compact = plan_decode_cache(vllm_config, groups, available_memory, specs, page_sizes, layer_tuples)
++    if compact is not None:
++        return compact
+     capacity = max(available_memory // sum(page_sizes), 0)
+     num_blocks = may_override_num_blocks(vllm_config, capacity)
+     tensors: list[KVCacheTensor] = []
+diff --git a/vllm_ascend/worker/v2/attn_utils.py b/vllm_ascend/worker/v2/attn_utils.py
+--- a/vllm_ascend/worker/v2/attn_utils.py
++++ b/vllm_ascend/worker/v2/attn_utils.py
+@@ -1855,9 +1855,10 @@
+             if layer_name in layer_tuple_strides:
+                 # Descriptor-driven cache view construction
+                 block_stride = layer_tuple_strides[layer_name]
++                physical_blocks = kv_cache_raw_tensors[layer_name].nbytes // block_stride
+                 initial_offset = 0
+                 kv_cache_shape = group.backend.get_kv_cache_shape(
+-                    kv_cache_config.num_blocks,
++                    physical_blocks,
+                     get_storage_block_size(kv_cache_spec),
+                     kv_cache_spec.num_kv_heads,
+                     kv_cache_spec.head_size,
+@@ -1871,7 +1872,7 @@
+                     initial_offset = source_spec.unpadded_page_size_bytes
+                     kv_cache_shape_list.append(
+                         group.backend.get_kv_cache_shape(
+-                            kv_cache_config.num_blocks,
++                            physical_blocks,
+                             get_storage_block_size(kv_cache_spec),
+                             kv_cache_spec.num_kv_heads,
+                             kv_cache_spec.scale_dim,
+diff --git a/vllm_ascend/patch/platform/patch_kv_cache_coordinator.py b/vllm_ascend/patch/platform/patch_kv_cache_coordinator.py
+--- a/vllm_ascend/patch/platform/patch_kv_cache_coordinator.py
++++ b/vllm_ascend/patch/platform/patch_kv_cache_coordinator.py
+@@ -157,6 +157,13 @@
+             metrics_collector=metrics_collector,
+         )
+ 
++        from vllm_ascend.core.next20_compact_kv import configure_short_pool
++
++        self._next20_short_pool, self._next20_short_ids = configure_short_pool(
++            self.block_pool, kv_cache_config, enable_caching, enable_kv_cache_events,
++            hash_block_size, metrics_collector,
++        )
++
+         # KV cache group indices that get the EAGLE last-block drop.
+         self.eagle_group_ids: set[int] = {  # type: ignore[no-redef]
+             i for i, g in enumerate(kv_cache_config.kv_cache_groups) if g.is_eagle_group
+@@ -177,7 +184,7 @@
+         self.single_type_managers = tuple(
+             get_manager_for_kv_cache_spec(
+                 kv_cache_spec=_manager_spec(kv_cache_group.kv_cache_spec),
+-                block_pool=self.block_pool,
++                block_pool=self._next20_short_pool if i in self._next20_short_ids else self.block_pool,
+                 enable_caching=enable_caching,
+                 kv_cache_group_id=i,
+                 dcp_world_size=dcp_world_size,
+@@ -250,6 +257,24 @@
+         # of typical ~2K prompts, pinning P-side prefix hits to 0.
+         kv_transfer_config = getattr(kv_cache_config, "kv_transfer_config", None)
+         self.skips_eagle_block_drop = _skips_eagle_block_drop(kv_transfer_config)
++
++    def get_num_blocks_to_allocate(
++        self, request_id, num_tokens, new_computed_blocks, num_encoder_tokens,
++        total_computed_tokens, num_local_computed_tokens, num_tokens_main_model,
++        apply_admission_cap=False, prefill_end=0,
++    ):
++        if self._next20_short_pool is None:
++            return super().get_num_blocks_to_allocate(
++                request_id, num_tokens, new_computed_blocks, num_encoder_tokens,
++                total_computed_tokens, num_local_computed_tokens, num_tokens_main_model,
++                apply_admission_cap, prefill_end,
++            )
++        from vllm_ascend.core.next20_compact_kv import compact_required_blocks
++
++        return compact_required_blocks(
++            self, request_id, num_tokens, new_computed_blocks, total_computed_tokens,
++            num_local_computed_tokens, num_tokens_main_model, apply_admission_cap, prefill_end,
++        )
+ 
+     @property
+     def _cache_hit_alignment_tokens(self) -> int:
+diff --git a/vllm_ascend/distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py b/vllm_ascend/distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py
+--- a/vllm_ascend/distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py
++++ b/vllm_ascend/distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py
+@@ -491,6 +491,10 @@
+         self.mamba_ssm_size = mamba_ssm_size
+         self.remote_te_port: dict[str, dict[int, int]] = SizedDict()
+         self.remote_metadata_lock = threading.Lock()
++        from vllm_ascend.core.next20_compact_kv import prefill_page_mapping
++
++        self._next20_remote_slots = prefill_page_mapping(kv_cache_config)
++        self._next20_remote_strides = SizedDict()
+ 
+         self.request_queue: queue.Queue[Any] = queue.Queue()
+         first_kv_cache = next(iter(self.kv_caches.values()))
+@@ -750,6 +754,7 @@
+             remote_kv_caches_base_addrs = self.kv_caches_base_addr[remote_engine_id][remote_handshake_port]
+             local_kv_caches_base_addrs = self.kv_caches_base_addr[self.local_engine_id][self.local_handshake_port]
+             remote_transfer_port = self.remote_te_port[remote_engine_id][remote_handshake_port]
++            remote_lengths = self._next20_remote_strides[remote_engine_id][remote_handshake_port]
+         session_id = f"{remote_host}:{remote_transfer_port}"
+ 
+         # With P-side PP the remote worker only owns its stage's
+@@ -787,6 +792,19 @@
+                 len(remote_kv_caches_base_addrs),
+             )
+ 
++        from vllm_ascend.core.next20_compact_kv import append_page_reads
++
++        if self._next20_remote_slots is None:
++            remote_strides = block_stride_arr
++        else:
++            slots = self._next20_remote_slots
++            if self._prefill_pp_size != 1 or len(slots) != len(local_addrs):
++                raise ValueError("Compact Decode expects the original single-stage Prefill layout")
++            if len(remote_lengths) != len(remote_kv_caches_base_addrs) or max(slots) >= len(remote_lengths):
++                raise ValueError("Remote Prefill metadata does not match the original V4.1 pages")
++            remote_strides = [remote_lengths[i] for i in slots]
++            remote_kv_caches_base_addrs = [remote_kv_caches_base_addrs[i] for i in slots]
++
+         req_start_time = time.perf_counter()
+         src_list, dst_list, length_list = [], [], []
+         for i in range(self.hma_group_size):
+@@ -808,13 +826,10 @@
+                     continue
+                 block_len = block_len_arr[k]
+                 block_stride = block_stride_arr[k]
+-                for remote_block_id, local_block_id in zip(grouped_remote_block_ids, grouped_local_block_ids):
+-                    src = src_layer_base_addr + local_block_id[0] * block_stride
+-                    dst = dst_layer_base_addr + remote_block_id[0] * block_stride
+-                    length = block_len * len(local_block_id)
+-                    src_list.append(src)
+-                    dst_list.append(dst)
+-                    length_list.append(length)
++                append_page_reads(
++                    src_list, dst_list, length_list, src_layer_base_addr, dst_layer_base_addr,
++                    block_stride, remote_strides[k], block_len, grouped_remote_block_ids, grouped_local_block_ids,
++                )
+ 
+         ret = self.engine.batch_transfer_sync_read(session_id, src_list, dst_list, length_list)
+         if ret < 0:
+@@ -1090,6 +1105,7 @@
+             with self.remote_metadata_lock:
+                 self.kv_caches_base_addr[engine_id][remote_handshake_port] = agent_meta.kv_caches_base_addr
+                 self.remote_te_port[engine_id][remote_handshake_port] = agent_meta.te_rpc_port
++                self._next20_remote_strides[engine_id][remote_handshake_port] = agent_meta.block_lens
+         except Exception:
+             if isinstance(sock, zmq.Socket):  # type: ignore
+                 sock.close()
+diff --git a/vllm_ascend/worker/v2/model_runner.py b/vllm_ascend/worker/v2/model_runner.py
+--- a/vllm_ascend/worker/v2/model_runner.py
++++ b/vllm_ascend/worker/v2/model_runner.py
+@@ -466,6 +466,12 @@
+ 
+     def _init_kv_zero_meta(self) -> None:
+         """Use a tuple-aware zeroer for Ascend V1-compatible cache protocols."""
++        from vllm_ascend.core.next20_compact_kv import split_cache_zeroer
++
++        compact = split_cache_zeroer(self, AscendV2KVBlockZeroer)
++        if compact is not None:
++            self.kv_block_zeroer = compact
++            return
+         self.kv_block_zeroer = AscendV2KVBlockZeroer(
+             self.device,
+             attn_groups_iter=(g for groups in self.attn_groups for g in groups),
+diff --git a/vllm_ascend/core/next20_compact_kv.py b/vllm_ascend/core/next20_compact_kv.py
+new file mode 100644
+--- /dev/null
++++ b/vllm_ascend/core/next20_compact_kv.py
+@@ -0,0 +1,239 @@
++"""Separate long-context and bounded-window storage on V4.1 Decode."""
++
++from dataclasses import replace
++import logging
++from math import ceil
++
++from vllm.v1.core.block_pool import BlockPool
++from vllm.v1.kv_cache_interface import CircularBufferSpec, KVCacheConfig, KVCacheTensor, UniformTypeKVCacheSpecs
++from vllm_ascend.core.kv_cache_interface import AscendMLAAttentionSpec, AscendSlidingWindowMLASpec
++
++
++logger = logging.getLogger(__name__)
++
++
++def plan_decode_cache(config, groups, available, specs, page_sizes, layer_tuples):
++    transfer = config.kv_transfer_config
++    parallel = config.parallel_config
++    if (
++        transfer is None
++        or transfer.kv_connector != "MooncakeHybridConnector"
++        or transfer.kv_role != "kv_consumer"
++        or config.cache_config.enable_prefix_caching
++        or getattr(config.cache_config, "swa_bounded_replay", False)
++        or config.cache_config.num_gpu_blocks_override is not None
++        or parallel.tensor_parallel_size != 1
++        or parallel.pipeline_parallel_size != 1
++        or parallel.decode_context_parallel_size != 1
++        or transfer.get_from_extra_config("prefill", {}).get("pp_size", 1) != 1
++    ):
++        return None
++    if any(not isinstance(group.kv_cache_spec, UniformTypeKVCacheSpecs) for group in groups):
++        return None
++
++    seqs = config.scheduler_config.max_num_seqs
++    tokens = config.scheduler_config.max_num_batched_tokens
++    spec = config.speculative_config
++    lookahead = spec.num_speculative_tokens if spec is not None else 0
++    short_blocks = 1  # block zero is reserved by BlockPool
++    for group in groups:
++        group_specs = tuple(group.kv_cache_spec.kv_cache_specs.values())
++        if all(isinstance(item, CircularBufferSpec) for item in group_specs):
++            short_blocks += seqs
++        elif all(isinstance(item, AscendSlidingWindowMLASpec) for item in group_specs):
++            block = group_specs[0].block_size
++            window = max(item.sliding_window + getattr(item, "extra_retained_tokens", 0) for item in group_specs)
++            # Keep overlapping in-flight batches and per-request partial pages.
++            # Admission also checks the actual free short-block count.
++            short_blocks += seqs * (2 + ceil((window - 1 + lookahead) / block)) + ceil(2 * tokens / block)
++        elif not all(isinstance(item, AscendMLAAttentionSpec) for item in group_specs):
++            return None
++
++    longs = []
++    shorts = []
++    padded = dict(specs)
++    for original_stride, names in zip(page_sizes, layer_tuples, strict=True):
++        long_layers = tuple(n for n in names if isinstance(specs[n], AscendMLAAttentionSpec))
++        short_layers = tuple(n for n in names if n not in long_layers)
++        if len(long_layers) != 2 or not short_layers or long_layers != tuple(names[:2]):
++            return None
++        kv, index = long_layers
++        kv_bytes = specs[kv].unpadded_page_size_bytes
++        packed_bytes = kv_bytes + specs[index].unpadded_page_size_bytes
++        long_stride = 128 * ceil(packed_bytes / 128)
++        if long_stride > original_stride or kv_bytes % 128:
++            return None
++        padded[kv] = replace(specs[kv], page_size_padded=kv_bytes)
++        padded[index] = replace(specs[index], page_size_padded=long_stride - kv_bytes)
++        longs.append((long_layers, long_stride))
++        shorts.append((short_layers, original_stride))
++
++    short_bytes = short_blocks * sum(stride for _, stride in shorts)
++    long_stride_sum = sum(stride for _, stride in longs)
++    long_blocks = (available - short_bytes) // long_stride_sum
++    if long_blocks <= max(short_blocks, available // sum(page_sizes)):
++        return None
++    tensors = [
++        KVCacheTensor(size=blocks * stride, layers=list(layers), offset=0, layer_stride=0, block_stride=stride)
++        for geometry, blocks in ((longs, long_blocks), (shorts, short_blocks))
++        for layers, stride in geometry
++    ]
++    cache_groups = [
++        replace(group, kv_cache_spec=UniformTypeKVCacheSpecs.from_specs({n: padded[n] for n in group.layer_names}))
++        for group in groups
++    ]
++    logger.info(
++        "Compact Decode KV layout: %d long blocks at %d bytes, %d short blocks at %d total bytes",
++        long_blocks, long_stride_sum, short_blocks, short_bytes,
++    )
++    return KVCacheConfig(
++        num_blocks=long_blocks,
++        kv_cache_tensors=tensors,
++        kv_cache_groups=cache_groups,
++        prefix_cache_retention_interval=config.cache_config.prefix_cache_retention_interval,
++    )
++
++
++def physical_block_counts(config):
++    return {
++        layer: tensor.size // tensor.block_stride
++        for tensor in config.kv_cache_tensors
++        if tensor.block_stride > 0
++        for layer in tensor.layers
++    }
++
++
++class CompactCacheZeroer:
++    """Clear only the arena that owns the newly allocated block."""
++
++    def __init__(self, long, short, long_blocks, short_blocks):
++        self.long = long
++        self.short = short
++        self.long_blocks = long_blocks
++        self.short_blocks = short_blocks
++
++    def zero_block_ids(self, block_ids):
++        long, short = [], []
++        for block_id in block_ids:
++            if block_id < self.long_blocks:
++                long.append(block_id)
++            else:
++                short.append(block_id - self.long_blocks)
++        if any(i < 0 for i in long) or any(i >= self.short_blocks for i in short):
++            raise ValueError("A zeroing operation is outside its physical KV cache arena")
++        self.long.zero_block_ids(long)
++        self.short.zero_block_ids(short)
++
++    def warmup(self, num_kv_blocks):
++        self.long.warmup(min(num_kv_blocks, self.long_blocks))
++        self.short.warmup(min(num_kv_blocks, self.short_blocks))
++
++
++def split_cache_zeroer(runner, factory):
++    config = runner.kv_cache_config
++    counts = physical_block_counts(config)
++    if not any(n < config.num_blocks for n in counts.values()):
++        return None
++    groups = {}
++    for pack in runner.attn_groups:
++        for group in pack:
++            owned = [layer for layer in group.layer_names if layer in counts]
++            if owned:
++                count, = {counts[layer] for layer in owned}
++                groups.setdefault(count, []).append(replace(group, layer_names=owned))
++    short_blocks, = groups.keys() - {config.num_blocks}
++
++    def build(count):
++        return factory(
++            runner.device, attn_groups_iter=groups[count], kernel_block_sizes=runner.kernel_block_sizes,
++            static_forward_context=runner.compilation_config.static_forward_context,
++            num_blocks=count, cache_dtype=runner.cache_config.cache_dtype,
++        )
++
++    return CompactCacheZeroer(build(config.num_blocks), build(short_blocks), config.num_blocks, short_blocks)
++
++
++def configure_short_pool(long_pool, config, enable_caching, enable_events, hash_block_size, collector):
++    counts = physical_block_counts(config)
++    sizes = [
++        {counts.get(layer, config.num_blocks) for layer in group.layer_names}
++        for group in config.kv_cache_groups
++    ]
++    if not any(len(group) == 1 and next(iter(group)) < config.num_blocks for group in sizes):
++        return None, frozenset()
++    if enable_caching or any(len(group) != 1 for group in sizes):
++        raise ValueError("Compact Decode requires independent, uniform, uncached KV groups")
++    short_ids = frozenset(i for i, group in enumerate(sizes) if next(iter(group)) < config.num_blocks)
++    other = {next(iter(sizes[i])) for i in short_ids}
++    short_blocks, = other
++    short = BlockPool(
++        num_gpu_blocks=short_blocks, enable_caching=False, hash_block_size=hash_block_size,
++        enable_kv_cache_events=enable_events, metrics_collector=collector,
++    )
++    short_objects = {id(block) for block in short.blocks}
++    free_long = long_pool.free_blocks
++
++    def free_to_owner(blocks):
++        ordinary, bounded = [], []
++        for block in blocks:
++            (bounded if id(block) in short_objects else ordinary).append(block)
++        free_long(ordinary)
++        short.free_blocks(bounded)
++
++    # Deferred frees arrive here after an asynchronous step, with block
++    # objects from both arenas. IDs can repeat across the two arenas.
++    long_pool.free_blocks = free_to_owner
++    return short, short_ids
++
++
++def compact_required_blocks(coordinator, request_id, num_tokens, new_computed_blocks, total_computed_tokens,
++                            num_local_computed_tokens, num_tokens_main_model, apply_admission_cap, prefill_end):
++    long, short = 0, 0
++    if coordinator.retention_interval != 0:
++        prefill_end = 0
++    for i, manager in enumerate(coordinator.single_type_managers):
++        blocks = manager.get_num_blocks_to_allocate(
++            request_id, num_tokens, new_computed_blocks[i], total_computed_tokens,
++            num_local_computed_tokens, num_tokens_main_model, apply_admission_cap=apply_admission_cap,
++            prefill_end=prefill_end,
++        )
++        if i in coordinator._next20_short_ids:
++            short += blocks
++        else:
++            long += blocks
++    if short > coordinator._next20_short_pool.get_num_free_blocks():
++        return coordinator.block_pool.get_num_free_blocks() + 1
++    return long
++
++
++def prefill_page_mapping(config):
++    counts = physical_block_counts(config)
++    if not any(value < config.num_blocks for value in counts.values()):
++        return None
++
++    from vllm_ascend.models.deepseek_v41.cache_config import _specs_from_groups, get_layer_tuples
++
++    _, original = get_layer_tuples(_specs_from_groups(config.kv_cache_groups))
++    by_layer = {name: i for i, group in enumerate(original) for name in group}
++    mapping = [next(iter({by_layer[layer] for layer in tensor.layers})) for tensor in config.kv_cache_tensors]
++    if len(mapping) != 2 * len(original):
++        raise ValueError("Compact Decode pages do not correspond to the original Prefill slots")
++    return mapping
++
++
++def append_page_reads(src, dst, lengths, local_base, remote_base, local_stride, remote_stride,
++                      block_len, grouped_remote_blocks, grouped_local_blocks):
++    if block_len > min(local_stride, remote_stride):
++        raise ValueError("KV transfer page length exceeds a physical page")
++    for remote, local in zip(grouped_remote_blocks, grouped_local_blocks, strict=True):
++        if len(remote) != len(local):
++            raise ValueError("KV transfer block counts differ")
++        if local_stride == remote_stride == block_len:
++            src.append(local_base + local[0] * local_stride)
++            dst.append(remote_base + remote[0] * remote_stride)
++            lengths.append(len(local) * block_len)
++        else:
++            for remote_block, local_block in zip(remote, local, strict=True):
++                src.append(local_base + local_block * local_stride)
++                dst.append(remote_base + remote_block * remote_stride)
++                lengths.append(block_len)
