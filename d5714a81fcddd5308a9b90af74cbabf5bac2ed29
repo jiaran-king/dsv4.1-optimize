@@ -1,0 +1,16 @@
+patches/case21/moe-dispatch/README.md
+  h_77bd4dffd3013a 1-24
+patches/case21/moe-dispatch/vllm-ascend.patch
+  h_77bd4dffd3013a 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d5714a81fcddd5308a9b90af74cbabf5bac2ed29",
+  "prompts": {},
+  "humans": {
+    "h_77bd4dffd3013a": {
+      "author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}

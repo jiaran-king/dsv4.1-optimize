@@ -1,0 +1,18 @@
+patches/case19/prefill-batch32k/README.md
+  h_77bd4dffd3013a 1-21
+patches/case19/prefill-batch32k/launcher.patch
+  h_77bd4dffd3013a 1-10
+patches/case19/prefill-batch32k/vllm-ascend.patch
+  h_77bd4dffd3013a 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "466109d858e5620942d30d30894dc9d05223212b",
+  "prompts": {},
+  "humans": {
+    "h_77bd4dffd3013a": {
+      "author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}

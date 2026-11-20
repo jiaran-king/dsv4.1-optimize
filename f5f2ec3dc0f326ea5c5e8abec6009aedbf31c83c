@@ -1,0 +1,16 @@
+patches/case19/engram-overlap/README.md
+  h_77bd4dffd3013a 1-18
+patches/case19/engram-overlap/launcher.patch
+  h_77bd4dffd3013a 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f5f2ec3dc0f326ea5c5e8abec6009aedbf31c83c",
+  "prompts": {},
+  "humans": {
+    "h_77bd4dffd3013a": {
+      "author": "Zhou ziheng <jiaranran2@gmail.com>"
+    }
+  }
+}
