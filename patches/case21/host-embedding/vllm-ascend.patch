@@ -1,0 +1,180 @@
+diff --git a/vllm_ascend/worker/v2/model_runner.py b/vllm_ascend/worker/v2/model_runner.py
+--- a/vllm_ascend/worker/v2/model_runner.py
++++ b/vllm_ascend/worker/v2/model_runner.py
+@@ -355,6 +355,11 @@
+             # memory profiling.
+             join_nz_warm_thread()
+ 
++        if not load_dummy_weights:
++            from vllm_ascend.worker.v2.next20_host_embedding import install_decode_embeddings
++
++            install_decode_embeddings(self)
++
+         # In cudagraph modes the dumper must be started before graph capture so
+         # that aclgraph capture/replay is instrumented (v1 parity: v1 starts
+         # the dumper at the end of load_model).
+diff --git a/vllm_ascend/worker/v2/next20_host_embedding.py b/vllm_ascend/worker/v2/next20_host_embedding.py
+new file mode 100644
+--- /dev/null
++++ b/vllm_ascend/worker/v2/next20_host_embedding.py
+@@ -0,0 +1,160 @@
++"""Keep immutable TP1 Decode input embeddings in host VMM at their original precision."""
++
++import logging
++from pathlib import Path
++import tempfile
++import weakref
++
++import torch
++import triton
++import triton.language as tl
++from vllm.model_executor.layers.vocab_parallel_embedding import UnquantizedEmbeddingMethod
++from vllm_ascend.models.deepseek_v41.engram.local_vmm_host import CHUNK_ROWS, MappedHostBuffer
++from vllm_ascend.ops.triton.triton_utils import init_device_properties_triton
++
++
++logger = logging.getLogger(__name__)
++
++
++@triton.jit
++def _host_embedding_kernel(
++    ptrs, token_ids, out, ROWS: tl.constexpr, WIDTH: tl.constexpr, COLS: tl.constexpr, CHUNK: tl.constexpr,
++):
++    row = tl.program_id(0)
++    columns = tl.program_id(1) * COLS + tl.arange(0, COLS)
++    token = tl.load(token_ids + row).to(tl.int64)
++    valid = (token >= 0) & (token < ROWS)
++    safe_token = tl.where(valid, token, 0)
++    base = tl.load(ptrs + safe_token // CHUNK).to(tl.pointer_type(tl.bfloat16))
++    data = tl.load(base + safe_token % CHUNK * WIDTH + columns, (columns < WIDTH) & valid, other=0)
++    tl.store(out + row * WIDTH + columns, data, columns < WIDTH)
++
++
++@torch.library.custom_op("vllm::next20_host_embedding", mutates_args=())
++def _host_embedding(ids: torch.Tensor, ptrs: torch.Tensor, rows: int, width: int) -> torch.Tensor:
++    flat = ids.reshape(-1).contiguous()
++    result = torch.empty((flat.numel(), width), dtype=torch.bfloat16, device=flat.device)
++    if flat.numel():
++        block = 2048
++        _host_embedding_kernel[(flat.numel(), triton.cdiv(width, block))](
++            ptrs, flat, result, rows, width, block, CHUNK_ROWS, num_warps=4,
++        )
++    return result.reshape(*ids.shape, width)
++
++
++@_host_embedding.register_fake
++def _host_embedding_fake(ids, ptrs, rows, width):
++    return ids.new_empty((*ids.shape, width), dtype=torch.bfloat16)
++
++
++class HostEmbeddingTable:
++    """A private VMM range containing the BF16 embedding's original bytes."""
++
++    def __init__(self, weight):
++        self.rows, self.width = weight.shape
++        self.directory = tempfile.TemporaryDirectory(prefix="decode-embed-vmm-", dir="/dev/shm")
++        try:
++            self.mapping = MappedHostBuffer(
++                Path(self.directory.name) / "table",
++                self.rows,
++                2 * self.width,
++                torch.int8,
++                owner=True,
++                device=weight.device,
++            )
++        except Exception:
++            self.directory.cleanup()
++            raise
++        try:
++            for start in range(0, self.rows, 8192):
++                chunk = weight[start : start + 8192].detach().cpu().contiguous()
++                self.mapping.publish(start, chunk.view(torch.int8))
++            self.view = self.mapping.view()
++        except Exception:
++            self.mapping.close()
++            self.directory.cleanup()
++            raise
++        init_device_properties_triton()
++
++    def lookup(self, ids):
++        return _host_embedding(ids, self.view.ptrs, self.rows, self.width)
++
++    def close(self):
++        self.view.close()
++        self.mapping.close()
++        self.directory.cleanup()
++
++
++class HostEmbeddingMethod(UnquantizedEmbeddingMethod):
++    def __init__(self, table):
++        self.table = table
++
++    def embedding(self, layer, input_):
++        return self.table.lookup(input_)
++
++
++def _get_input_embedding(model):
++    get_language_model = getattr(model, "get_language_model", None)
++    language_model = get_language_model() if get_language_model is not None else model
++    return getattr(getattr(language_model, "model", None), "embed_tokens", None)
++
++
++@torch.inference_mode()
++def _move_embedding(embedding):
++    weight = embedding.weight
++    table = HostEmbeddingTable(weight)
++    try:
++        example_ids = torch.tensor(
++            [0, 42, weight.shape[0] // 2, weight.shape[0] - 1], dtype=torch.int64, device=weight.device,
++        )
++        expected = embedding(example_ids)
++        if not torch.equal(expected, table.lookup(example_ids)):
++            raise RuntimeError("Host VMM input embedding failed the loaded-weight parity check")
++        metadata_weight = torch.nn.Parameter(torch.empty_like(weight, device="meta"), requires_grad=False)
++    except Exception:
++        table.close()
++        raise
++    method = HostEmbeddingMethod(table)
++    weakref.finalize(method, table.close)
++    embedding.weight = metadata_weight
++    embedding.quant_method = method
++
++
++def install_decode_embeddings(runner):
++    config = runner.vllm_config
++    transfer = config.kv_transfer_config
++    text = config.model_config.hf_text_config
++    parallel = config.parallel_config
++    if (
++        transfer is None
++        or transfer.kv_role != "kv_consumer"
++        or text.model_type not in ("deepseek_v41", "deepseek_v41_text")
++        or getattr(text, "tie_word_embeddings", False)
++        or parallel.tensor_parallel_size != 1
++        or parallel.pipeline_parallel_size != 1
++        or config.lora_config is not None
++        or config.model_config.enable_sleep_mode
++    ):
++        return
++    target = _get_input_embedding(runner.model)
++    draft = _get_input_embedding(getattr(runner.speculator, "model", None))
++    before = torch.npu.memory_allocated(runner.device)
++    moved = 0
++    for layer in dict.fromkeys((target, draft)):
++        if (
++            layer is not None
++            and layer.tp_size == 1
++            and type(layer.quant_method) is UnquantizedEmbeddingMethod
++            and layer.weight.device.type == "npu"
++            and layer.weight.dtype == torch.bfloat16
++            and layer.weight.ndim == 2
++            and layer.weight.is_contiguous()
++        ):
++            _move_embedding(layer)
++            moved += 1
++    released = before - torch.npu.memory_allocated(runner.device)
++    if not moved or released <= 0:
++        raise RuntimeError("Decode host embedding released no device weight storage")
++    runner.model_memory_usage -= released
++    torch.npu.empty_cache()
++    logger.info("Decode input embedding host VMM parity passed for %d table(s), freed %d HBM bytes", moved, released)
