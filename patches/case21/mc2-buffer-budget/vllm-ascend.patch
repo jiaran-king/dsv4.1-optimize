@@ -1,0 +1,134 @@
+--- a/vllm_ascend/ascend_forward_context.py
++++ b/vllm_ascend/ascend_forward_context.py
+@@ -1,4 +1,5 @@
+ import math
++import os
+ from contextlib import contextmanager
+ from contextvars import ContextVar
+ from enum import Enum
+@@ -255,6 +256,70 @@
+ _reserved_mc2_mask: torch.Tensor | None = None
+ 
+ 
++def _a3_decode_mc2_capacity(vllm_config: VllmConfig, token_capacity: int) -> int:
++    """Do not select A3 MC2 for a batch that exceeds its HCCL window."""
++    parallel = vllm_config.parallel_config
++    ascend_config = get_ascend_config()
++    # This path uses the ordinary A3 MC2 dispatch/combine pair and a uniform
++    # batch across DP ranks. Other hardware and fused/elastic modes own their
++    # own buffer contracts.
++    if (
++        get_current_hardware_profile().moe_comm_policy != MoECommPolicy.FUSED_OR_CAPACITY
++        or not _is_decode_only_node(vllm_config)
++        or not parallel.enable_expert_parallel
++        or parallel.tensor_parallel_size != 1
++        or parallel.prefill_context_parallel_size != 1
++        or getattr(parallel, "enable_eplb", False)
++        or ascend_config.enable_fused_mc2
++        or ascend_config.enable_prefill_mc2
++    ):
++        return token_capacity
++    configured_mib = os.environ.get("HCCL_BUFFSIZE")
++    if not configured_mib or not configured_mib.isdecimal():
++        return token_capacity
++
++    ep_size = parallel.world_size_across_dp // parallel.pipeline_parallel_size
++    models = [vllm_config.model_config]
++    draft = vllm_config.speculative_config
++    if draft is not None and draft.draft_model_config is not None:
++        models.append(draft.draft_model_config)
++
++    window_bytes_per_token = 0
++    for model in models:
++        text = model.hf_text_config
++        experts = model.get_num_experts()
++        if experts < 1:
++            continue
++        hidden = text.hidden_size
++        topk = getattr(text, "num_experts_per_tok", getattr(text, "top_k_experts", experts))
++        # CANN 8.5 A3 DispatchV2/CombineV2 require double buffering.
++        # Align the receive payload plus its 44-byte header to 512 bytes.
++        # Reserve the shared-expert term conservatively, even though this
++        # CANN path executes the shared expert separately.
++        feature_bytes = 2 * hidden
++        send_bytes = math.ceil(feature_bytes / 512) * 512
++        receive_bytes = math.ceil((math.ceil(feature_bytes / 32) * 32 + 44) / 512) * 512
++        local_experts = math.ceil(experts / ep_size)
++        shared_experts = getattr(text, "n_shared_experts", 0) or 0
++        footprint = 2 * (local_experts * ep_size * receive_bytes + (topk + shared_experts) * send_bytes)
++        window_bytes_per_token = max(window_bytes_per_token, footprint)
++    if not window_bytes_per_token:
++        return token_capacity
++
++    # Keep the documented minimum space for the communicator metadata.
++    budget_mib = int(configured_mib)
++    allowed = max(0, (budget_mib - 2) * 1024**2 // window_bytes_per_token)
++    limited = min(token_capacity, allowed)
++    if limited < token_capacity:
++        logger.info(
++            "A3 Decode MC2: HCCL window %d MiB limits MC2 to %d tokens per rank; "
++            "larger batches use the existing non-MC2 path",
++            budget_mib,
++            limited,
++        )
++    return limited
++
++
+ def set_mc2_tokens_capacity(vllm_config, max_num_reqs, uniform_decode_query_len):
+     global _mc2_tokens_capacity
+     if _mc2_tokens_capacity is not None:
+@@ -286,7 +351,7 @@
+     # keep the num_tokens_per_tp_rank less than mc2 tokens per rank limit
+     else:
+         num_tokens_per_tp_rank = min(num_tokens_per_tp_rank, _MC2_TOKENS_PER_RANK_LIMIT)
+-    _mc2_tokens_capacity = num_tokens_per_tp_rank * tp_size
++    _mc2_tokens_capacity = _a3_decode_mc2_capacity(vllm_config, num_tokens_per_tp_rank * tp_size)
+ 
+ 
+ def get_mc2_tokens_capacity():
+--- a/vllm_ascend/platform.py
++++ b/vllm_ascend/platform.py
+@@ -630,6 +630,8 @@
+             compile_backend=cls.get_compile_backend(),
+             enable_shared_expert_dp=ascend_config.enable_shared_expert_dp,
+         )
++
++        _limit_a3_decode_mc2_graphs(vllm_config)
+ 
+         # 8.Setup worker class, custom ops and scheduler (ascend_config -> vllm_config).
+         _setup_worker_and_scheduler(vllm_config, ascend_config)
+@@ -1363,6 +1365,34 @@
+         compilation_config.cudagraph_mode = cudagraph_mode
+ 
+ 
++def _limit_a3_decode_mc2_graphs(vllm_config: VllmConfig) -> None:
++    from vllm.config import CUDAGraphMode
++    from vllm_ascend.ascend_forward_context import _a3_decode_mc2_capacity
++
++    config = vllm_config.compilation_config
++    sizes = config.cudagraph_capture_sizes
++    if config.cudagraph_mode != CUDAGraphMode.FULL_DECODE_ONLY or not sizes:
++        return
++
++    # A3 AllToAll is the eager fallback above the MC2 window. Keep it out
++    # of full-Decode capture, where its extra stream cannot be joined.
++    cap = _a3_decode_mc2_capacity(vllm_config, max(sizes))
++    supported = [size for size in sizes if size <= cap]
++    if len(supported) == len(sizes):
++        return
++    if not supported:
++        raise ValueError("The configured HCCL window cannot capture the minimum Decode batch")
++
++    logger.info(
++        "A3 Decode graph window: %d to %d tokens; larger batches use eager AllToAll",
++        max(sizes),
++        supported[-1],
++    )
++    config.max_cudagraph_capture_size = supported[-1]
++    config.cudagraph_capture_sizes = supported
++    update_cudagraph_capture_sizes(vllm_config, supported)
++
++
+ def _setup_compile_backend(
+     vllm_config: VllmConfig,
+     compile_backend: str,
