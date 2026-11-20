@@ -23,6 +23,8 @@
 
 ## 编号 21 · 纯 D
 
+当前 [C1152 阶段对照](../docs/case21-c1152.md) 包含 13 个计时轮、59,904 条成功请求。用 [逐轮和精度 JSON](case21/c1152.json) 查稳态窗口，用 [逐请求 CSV.gz](case21/c1152-requests.csv.gz) 查各轮起止、输入输出 token 和选样标记。请求时间以每轮首条请求为零点。稳态单卡输出为稳态标记行的输出 token 总数除以窗口时长和 8 张 D 卡。
+
 [对比结果](case21/comparison.json)记录原表、正式基线、两轮优化、配置及延迟门限。[逐轮结果](case21/trials.json)和[逐请求时间线](case21/requests.csv.gz)包含 22 轮、86,016 条记录，覆盖原表同档复测、基线扫描、关键 A/B 和两轮验收。相对时间以每轮第一条请求的发出时间归零，稳态使用 AISBench 按请求发起时间选中的样本。
 
 在仓库根目录运行 `python3 bench/report_case21.py` 可核对逐轮全程和稳态统计、每轮平均 TPOT 门限、正式样本中位数与增益。 [第一轮曲线](case21/round1.svg) · [第二轮曲线](case21/round2.svg) · [编号 21 实验报告](../docs/case21-pure-d.md)
