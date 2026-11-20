@@ -1,0 +1,19 @@
+diff --git a/vllm/v1/core/kv_cache_manager.py b/vllm/v1/core/kv_cache_manager.py
+--- a/vllm/v1/core/kv_cache_manager.py
++++ b/vllm/v1/core/kv_cache_manager.py
+@@ -833,8 +833,13 @@
+     def take_new_block_ids(self) -> list[int]:
+         """Drain and return new attention block IDs for zeroing."""
+         ids: list[int] = []
+-        for mgr in self.coordinator.single_type_managers:
+-            ids.extend(mgr.take_new_block_ids())
++        short_ids = getattr(self.coordinator, "_next20_short_ids", ())
++        for group_id, mgr in enumerate(self.coordinator.single_type_managers):
++            manager_ids = mgr.take_new_block_ids()
++            if group_id in short_ids:
++                ids.extend(self.block_pool.num_gpu_blocks + block_id for block_id in manager_ids)
++            else:
++                ids.extend(manager_ids)
+         return ids
+ 
+     def record_blocks_for_zeroing(self, request_id: str, start_token: int) -> None:
