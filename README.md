@@ -20,6 +20,8 @@
 | 19 | 多请求合批和专家负载均衡带来主要收益。P 批次从 8K 加到 32K，保留融合 MoE，开启 EPLB 和通信重叠。 | [TTFT 与输入吞吐](results/case19/ttft-throughput.svg) |
 | 21 | D 先受 KV 容量限制。减小 MoE 缓冲和长 KV 页的占位，迁移输入 embedding，缩小 HCCL 缓冲，再消除融合 MoE 与共享专家激活的争用。 | [C1152 逐轮结果](results/case21/c1152.json) · [历史曲线](results/case21/round2.svg) |
 
+![编号 21 C1152 各阶段稳态单卡输出吞吐](results/case21/optimization-progress.png)
+
 ## 逐项优化与实测收益
 
 C 表示客户端并发上限。吞吐均按 P 或 D 的物理卡计。算子测量和服务吞吐在各行标明。
